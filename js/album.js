@@ -227,8 +227,19 @@
     if (reiniciar) { offset = 0; items = []; grid.innerHTML = ''; }
 
     listar(offset).then(function (lista) {
-      // El endpoint devuelve tambien carpetas (id null); se descartan.
-      var archivos = (lista || []).filter(function (o) { return o.id && o.name; });
+      // Se descartan las carpetas (id null), el marcador invisible que
+      // Supabase crea al hacer una carpeta desde el dashboard, y cualquier
+      // archivo vacío o que no sea imagen ni video.
+      var archivos = (lista || []).filter(function (o) {
+        if (!o.id || !o.name) return false;
+        if (o.name === '.emptyFolderPlaceholder' || o.name.charAt(0) === '.') return false;
+
+        var meta = o.metadata || {};
+        if (!meta.size) return false;
+
+        var tipo = meta.mimetype || '';
+        return /^image\//.test(tipo) || /^video\//.test(tipo) || esVideo(o.name);
+      });
 
       var nuevos = archivos.map(function (o) {
         var ruta = 'fotos/' + o.name;
