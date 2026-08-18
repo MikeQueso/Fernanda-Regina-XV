@@ -291,7 +291,10 @@
         <input type="file" id="albumInput" accept="image/*,video/*" multiple hidden>
         <button class="btn" type="button" id="albumBtn">Subir fotos</button>
         <p class="album__status" id="albumStatus" role="status" aria-live="polite"></p>
-        <div class="album__list" id="albumList"></div>
+
+        <p class="album__vacio" id="albumVacio" hidden>Todavía no hay fotos.<br>¡Sé el primero en compartir una!</p>
+        <div class="album__grid" id="albumGrid" hidden></div>
+        <button class="btn btn--mas" type="button" id="albumMas" hidden>Ver más</button>
       </div>
 
       <div class="soon soon--slim" id="albumSoon" hidden>

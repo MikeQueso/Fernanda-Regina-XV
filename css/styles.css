@@ -41,6 +41,9 @@ body.locked{ overflow:hidden; height:100%; }
 
 img,svg{ display:block; max-width:100%; }
 
+/* El atributo hidden debe ganarle a cualquier display de clase */
+[hidden]{ display:none !important; }
+
 /* Corazón dorado reutilizable (ornamentos) */
 .ornament__heart,.divider__heart{
   display:block; width:16px; height:16px;
@@ -501,11 +504,91 @@ img,svg{ display:block; max-width:100%; }
   color:var(--gold-lt); font-style:italic;
 }
 .album__status.is-error{ color:#ff8a9c; }
-.album__list{ display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-top:16px; }
-.album__thumb{
-  width:64px; height:64px; border-radius:3px; object-fit:cover;
-  border:1px solid rgba(212,175,55,.4); opacity:.9;
+.album__vacio{
+  margin:22px auto 0; max-width:28ch;
+  font-size:.95rem; font-style:italic; line-height:1.6;
+  color:rgba(245,236,224,.45);
 }
+
+/* Cuadrícula de fotos */
+.album__grid{
+  display:grid; gap:6px; margin-top:24px;
+  grid-template-columns:repeat(3,1fr);
+}
+.shot{
+  position:relative; padding:0; margin:0; cursor:pointer;
+  aspect-ratio:1/1; overflow:hidden; border-radius:3px;
+  border:1px solid rgba(212,175,55,.32);
+  background:rgba(255,255,255,.03);
+  transition:transform .25s, border-color .25s, box-shadow .25s;
+  -webkit-tap-highlight-color:transparent;
+}
+.shot:hover,.shot:focus-visible{
+  transform:scale(1.04); border-color:var(--gold); outline:none;
+  box-shadow:0 6px 20px rgba(0,0,0,.6); z-index:2;
+}
+.shot img{ width:100%; height:100%; object-fit:cover; }
+.shot--video{ display:grid; place-items:center; background:rgba(179,0,27,.16); }
+.shot__play{
+  width:0; height:0;
+  border-left:17px solid var(--gold-lt);
+  border-top:11px solid transparent;
+  border-bottom:11px solid transparent;
+  filter:drop-shadow(0 2px 6px rgba(0,0,0,.7));
+}
+.btn--mas{ margin-top:18px; }
+
+/* Visor a pantalla completa */
+.visor{
+  position:fixed; inset:0; z-index:200;
+  display:grid; place-items:center;
+  background:rgba(6,1,3,.96); backdrop-filter:blur(6px);
+  padding:56px 12px;
+}
+.visor[hidden]{ display:none; }
+.visor__caja{
+  display:grid; place-items:center;
+  max-width:100%; max-height:100%;
+}
+.visor__caja img,.visor__caja video{
+  max-width:min(96vw,900px); max-height:82vh;
+  width:auto; height:auto;
+  border-radius:3px; box-shadow:0 14px 50px rgba(0,0,0,.8);
+}
+.visor__x{
+  position:absolute; top:12px; right:14px; z-index:3;
+  width:44px; height:44px; border-radius:50%; cursor:pointer;
+  border:1px solid rgba(212,175,55,.5); background:rgba(20,4,9,.85);
+  color:var(--gold-lt); font-size:1.7rem; line-height:1;
+  -webkit-tap-highlight-color:transparent;
+}
+.visor__x:hover{ border-color:var(--gold); color:#fff; }
+.visor__nav{
+  position:absolute; top:50%; transform:translateY(-50%); z-index:3;
+  width:46px; height:46px; border-radius:50%; cursor:pointer;
+  border:1px solid rgba(212,175,55,.4); background:rgba(20,4,9,.7);
+  -webkit-tap-highlight-color:transparent;
+}
+.visor__nav::before{
+  content:''; position:absolute; top:50%; left:50%;
+  width:11px; height:11px; margin:-6px 0 0 -4px;
+  border-right:2px solid var(--gold-lt); border-bottom:2px solid var(--gold-lt);
+}
+.visor__nav--prev{ left:10px; }
+.visor__nav--prev::before{ transform:rotate(135deg); margin-left:-7px; }
+.visor__nav--next{ right:10px; }
+.visor__nav--next::before{ transform:rotate(-45deg); }
+.visor__nav:hover{ border-color:var(--gold); }
+.visor__pos{
+  position:absolute; bottom:16px; left:0; right:0; margin:0; text-align:center;
+  font-family:var(--f-title); font-size:.58rem;
+  letter-spacing:.26em; color:rgba(212,175,55,.75);
+}
+
+@media (min-width:560px){
+  .album__grid{ grid-template-columns:repeat(4,1fr); gap:8px; }
+}
+
 .album__bar{
   margin:12px auto 0; width:min(280px,80%); height:3px; border-radius:2px;
   background:rgba(212,175,55,.18); overflow:hidden;

@@ -55,8 +55,9 @@ bloque `<div class="soon">`.
 ## Configurar el álbum de fotos (Supabase)
 
 1. Crear un proyecto en <https://supabase.com> (plan gratis).
-2. **Storage → New bucket** → nombre `album`. Dejarlo **privado**
-   (no marcar *Public bucket*).
+2. **Storage → New bucket** → nombre `album`, marcado como **Public bucket**.
+   Hace falta que sea público para que la galería pueda mostrar las fotos
+   en la página (un `<img>` no puede mandar cabeceras de autenticación).
 3. **SQL Editor → New query** → pegar y ejecutar:
 
    ```sql
@@ -64,10 +65,16 @@ bloque `<div class="soon">`.
    on storage.objects for insert
    to anon
    with check (bucket_id = 'album');
+
+   create policy "Invitados pueden ver el album"
+   on storage.objects for select
+   to anon
+   using (bucket_id = 'album');
    ```
 
-   Esto permite **subir y nada más**. Nadie puede listar, ver ni borrar
-   las fotos desde fuera: solo se ven entrando al dashboard de Supabase.
+   Son las dos únicas operaciones permitidas: **subir y ver**. No se
+   concede `update` ni `delete`, así que nadie puede borrar ni reemplazar
+   una foto desde la página. Para eso hay que entrar al dashboard.
 
 4. Copiar de **Settings → Data API** el *Project URL*, y de
    **Settings → API Keys** la clave *anon / public*.
@@ -84,10 +91,27 @@ bloque `<div class="soon">`.
 En cuanto `url` tenga valor, el botón "Subir fotos" se activa solo.
 
 > La clave `anon` es pública por diseño: vive en el navegador y solo puede
-> hacer lo que las políticas permitan, que aquí es únicamente insertar.
+> hacer lo que las políticas permitan, que aquí es insertar y leer.
 > La que **nunca** se publica ni se pega en este archivo es la `service_role`.
 
 Las fotos quedan en el dashboard de Supabase, en **Storage → album**.
+
+### Cómo guarda las fotos
+
+Cada imagen se sube en dos tamaños, redimensionada **en el navegador del
+invitado** antes de salir:
+
+| Carpeta | Lado mayor | Para qué |
+|---|---|---|
+| `fotos/` | 2048 px · JPEG q86 | lo que se ve al abrir la foto |
+| `thumbs/` | 480 px · JPEG q72 | la cuadrícula de la galería |
+
+Así una foto de 5 MB del celular viaja como ~400 KB. Sube más rápido con
+datos móviles, la galería no tarda en cargar y el plan gratis (1 GB) rinde
+para miles de fotos en vez de doscientas.
+
+Los videos se suben tal cual, sin recomprimir, y salen en la galería con un
+ícono de reproducir.
 
 ---
 
