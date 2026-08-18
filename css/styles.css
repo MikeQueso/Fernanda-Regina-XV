@@ -538,27 +538,42 @@ img,svg{ display:block; max-width:100%; }
   background:linear-gradient(180deg,#f6e3a1,#e8546b 60%,#b3001b);
   -webkit-background-clip:text; background-clip:text; color:transparent;
 }
-.closing__cards{ display:flex; justify-content:center; align-items:center; gap:12px; margin-bottom:34px; min-height:62px; }
+/* Abanico de cartas del cierre */
+.fan{
+  --c: clamp(64px, 18vw, 96px);
+  display:flex; justify-content:center; align-items:flex-end;
+  margin:0 auto 40px; padding-top:26px;
+}
+.fan img{
+  width:var(--c); height:auto;
+  margin-inline:calc(var(--c) * -0.09);
+  transform-origin:50% 95%;
+  filter:drop-shadow(0 10px 20px rgba(0,0,0,.85));
+}
+.fan img:nth-child(1){ transform:rotate(-24deg) translateY(16px); z-index:1; }
+.fan img:nth-child(2){ transform:rotate(-12deg) translateY(4px);  z-index:2; }
+.fan img:nth-child(3){ transform:rotate(0deg)   translateY(-5px); z-index:3; }
+.fan img:nth-child(4){ transform:rotate(12deg)  translateY(4px);  z-index:2; }
+.fan img:nth-child(5){ transform:rotate(24deg)  translateY(16px); z-index:1; }
+
 .closing__sig{
   margin:0; font-family:var(--f-title); font-size:.54rem;
   letter-spacing:.28em; text-transform:uppercase; color:rgba(212,175,55,.55);
 }
 
-/* Naipe suelto (fallback CSS y contenedor para las cartas recortadas) */
-.pcard{
-  position:relative; width:44px; aspect-ratio:5/7; border-radius:4px;
-  background:#fdf6ec; border:1px solid rgba(212,175,55,.85);
-  box-shadow:0 5px 14px rgba(0,0,0,.7); overflow:hidden;
+/* ====================== CARTAS SUELTAS POR SECCIÓN ====================== */
+.acard{
+  position:absolute; z-index:1; pointer-events:none;
+  filter:drop-shadow(0 8px 20px rgba(0,0,0,.8));
 }
-.pcard::after{
-  content:attr(data-suit); position:absolute; inset:0;
-  display:grid; place-items:center; font-size:20px; color:var(--red);
-}
-.pcard--dark::after{ color:#14090c; }
-.pcard img{ width:100%; height:100%; object-fit:cover; }
-.pcard:has(img)::after{ content:none; }
-.closing__cards .pcard:nth-child(1){ transform:rotate(-13deg); }
-.closing__cards .pcard:nth-child(3){ transform:rotate(13deg); }
+.acard--hero1{ width:88px; top:11%;    right:5%;   --r:15deg;  transform:rotate(15deg);  animation:sway 8.5s ease-in-out infinite; }
+.acard--hero2{ width:74px; bottom:19%; left:7%;    --r:-18deg; transform:rotate(-18deg); animation:sway 10.5s ease-in-out infinite reverse; }
+.acard--count{ width:70px; bottom:30px; left:-16px;  --r:-14deg; transform:rotate(-14deg); animation:sway 11s ease-in-out infinite; }
+.acard--itin { width:78px; top:34px;    right:-18px; --r:16deg;  transform:rotate(16deg);  animation:sway 9.5s ease-in-out infinite reverse; }
+.acard--ubic { width:66px; top:28px;    left:-14px;  --r:-12deg; transform:rotate(-12deg); animation:sway 12s ease-in-out infinite; }
+.acard--vest { width:74px; bottom:30px; right:-16px; --r:14deg;  transform:rotate(14deg);  animation:sway 10s ease-in-out infinite reverse; }
+.acard--gift { width:70px; top:30px;    right:-14px; --r:-15deg; transform:rotate(-15deg); animation:sway 11.5s ease-in-out infinite; }
+.acard--album{ width:76px; bottom:34px; left:-18px;  --r:17deg;  transform:rotate(17deg);  animation:sway 9s ease-in-out infinite reverse; }
 
 /* ====================== REVEAL ====================== */
 .reveal{ opacity:0; transform:translateY(26px); transition:opacity .95s ease, transform .95s cubic-bezier(.22,.9,.3,1); }

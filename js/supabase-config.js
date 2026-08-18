@@ -17,18 +17,3 @@ window.SUPABASE = {
   // Bucket privado de Storage donde caen las fotos
   bucket: 'album'
 };
-
-/* ==========================================================
-   CARTAS RECORTADAS
-   Cuando estén los recortes individuales, pon aquí sus rutas.
-   Ejemplo:
-   window.CARTAS = [
-     'assets/img/cartas/reina.png',
-     'assets/img/cartas/alicia.png',
-     'assets/img/cartas/conejo.png',
-     'assets/img/cartas/sombrerero.png',
-     'assets/img/cartas/rey.png',
-     'assets/img/cartas/oruga.png'
-   ];
-   ========================================================== */
-window.CARTAS = [];

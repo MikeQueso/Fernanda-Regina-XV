@@ -161,35 +161,7 @@
   }
 
   /* ==========================================================
-     6. NAIPES DEL CIERRE
-     Si window.CARTAS trae rutas de imágenes, usa esas cartas;
-     si no, dibuja naipes con CSS como respaldo.
-     ========================================================== */
-  (function closingCards() {
-    var box = $('#closingCards');
-    if (!box) return;
-
-    var imgs = (window.CARTAS && window.CARTAS.length) ? window.CARTAS : null;
-    var suits = ['♥', '♠', '♥'];
-
-    for (var i = 0; i < 3; i++) {
-      var card = document.createElement('div');
-      card.className = 'pcard' + (!imgs && i === 1 ? ' pcard--dark' : '');
-
-      if (imgs) {
-        var im = document.createElement('img');
-        im.src = imgs[i % imgs.length];
-        im.alt = '';
-        card.appendChild(im);
-      } else {
-        card.setAttribute('data-suit', suits[i]);
-      }
-      box.appendChild(card);
-    }
-  })();
-
-  /* ==========================================================
-     7. NAIPES CAYENDO + POLVO DORADO
+     6. NAIPES CAYENDO + POLVO DORADO
      ========================================================== */
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
