@@ -11,7 +11,10 @@
   'use strict';
 
   var CFG = window.SUPABASE || {};
-  var MAX_MB     = 200;   // tope por archivo original
+  // Debe coincidir con el "File size limit" del bucket en Supabase (50 MB).
+  // Las fotos nunca se acercan porque se redimensionan antes de subir;
+  // el tope solo lo tocan los videos largos.
+  var MAX_MB     = 50;
   var LADO_FOTO  = 2048;  // lado mayor de la version grande
   var LADO_THUMB = 480;   // lado mayor de la miniatura
   var POR_PAGINA = 60;
@@ -130,9 +133,14 @@
     var files = Array.prototype.slice.call(input.files || []);
     if (!files.length) return;
 
-    var grandes = files.filter(function (f) { return f.size > MAX_MB * 1024 * 1024; });
+    // Solo se revisa lo que no es imagen: las fotos se redimensionan antes
+    // de subir, así que jamás alcanzan el tope.
+    var grandes = files.filter(function (f) {
+      return !/^image\//.test(f.type) && f.size > MAX_MB * 1024 * 1024;
+    });
     if (grandes.length) {
-      say('Hay ' + grandes.length + ' archivo(s) de más de ' + MAX_MB + ' MB. Quítalos e intenta de nuevo.', true);
+      say('Hay ' + grandes.length + ' video(s) de más de ' + MAX_MB +
+          ' MB. Recórtalos o quítalos e intenta de nuevo.', true);
       input.value = '';
       return;
     }
