@@ -9,11 +9,12 @@ window.SUPABASE = {
   url: '',
 
   // Settings → API Keys → anon / public
-  // Esta clave es pública por diseño: va en el navegador y no da
-  // acceso a nada que las políticas del bucket no permitan.
+  // Esta clave es pública por diseño: va en el navegador y no da acceso a
+  // nada que las políticas no permitan (aquí, solo subir).
+  // NUNCA pongas aquí la clave service_role.
   anonKey: '',
 
-  // Nombre del bucket de Storage donde caen las fotos
+  // Bucket privado de Storage donde caen las fotos
   bucket: 'album'
 };
 

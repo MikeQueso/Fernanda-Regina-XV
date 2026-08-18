@@ -55,9 +55,9 @@ bloque `<div class="soon">`.
 ## Configurar el álbum de fotos (Supabase)
 
 1. Crear un proyecto en <https://supabase.com> (plan gratis).
-2. **Storage → New bucket** → nombre `album`, marcar **Public bucket**.
-3. **Storage → Policies** → en el bucket `album`, crear una política que
-   permita subir a cualquier visitante:
+2. **Storage → New bucket** → nombre `album`. Dejarlo **privado**
+   (no marcar *Public bucket*).
+3. **SQL Editor → New query** → pegar y ejecutar:
 
    ```sql
    create policy "Invitados pueden subir fotos"
@@ -65,6 +65,9 @@ bloque `<div class="soon">`.
    to anon
    with check (bucket_id = 'album');
    ```
+
+   Esto permite **subir y nada más**. Nadie puede listar, ver ni borrar
+   las fotos desde fuera: solo se ven entrando al dashboard de Supabase.
 
 4. Copiar de **Settings → Data API** el *Project URL*, y de
    **Settings → API Keys** la clave *anon / public*.
@@ -81,9 +84,8 @@ bloque `<div class="soon">`.
 En cuanto `url` tenga valor, el botón "Subir fotos" se activa solo.
 
 > La clave `anon` es pública por diseño: vive en el navegador y solo puede
-> hacer lo que las políticas del bucket permitan. Con la política de arriba
-> los invitados **pueden subir pero no borrar ni listar** lo de los demás.
-> La que nunca se publica es la `service_role`.
+> hacer lo que las políticas permitan, que aquí es únicamente insertar.
+> La que **nunca** se publica ni se pega en este archivo es la `service_role`.
 
 Las fotos quedan en el dashboard de Supabase, en **Storage → album**.
 
