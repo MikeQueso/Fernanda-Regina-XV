@@ -109,6 +109,10 @@
   tbody tr:nth-child(even){ background:rgba(255,255,255,.016); }
   .apellido{ font-family:var(--f-title); font-size:.82rem; letter-spacing:.06em; }
   .boletos{ text-align:center; font-variant-numeric:tabular-nums; color:var(--gold-lt); font-size:1.1rem; }
+  .codigo{
+    text-align:center; font-family:var(--f-title); font-size:.82rem;
+    letter-spacing:.12em; color:rgba(245,236,224,.6); font-variant-numeric:tabular-nums;
+  }
   .fecha{ white-space:nowrap; font-size:.88rem; color:rgba(245,236,224,.5); }
 
   .vacio{ padding:40px 20px; text-align:center; font-style:italic; color:rgba(245,236,224,.45); }
@@ -168,6 +172,7 @@
         <thead>
           <tr>
             <th>Familia</th>
+            <th style="text-align:center">Código</th>
             <th style="text-align:center">Boletos</th>
             <th>Confirmó</th>
             <th class="colX"></th>
@@ -249,6 +254,10 @@
       td1.className = 'apellido';
       td1.textContent = f.apellido;
 
+      var tdC = document.createElement('td');
+      tdC.className = 'codigo';
+      tdC.textContent = f.codigo || '—';
+
       var td2 = document.createElement('td');
       td2.className = 'boletos';
       td2.textContent = f.boletos;
@@ -279,7 +288,8 @@
       });
       td4.appendChild(x);
 
-      tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3); tr.appendChild(td4);
+      tr.appendChild(td1); tr.appendChild(tdC); tr.appendChild(td2);
+      tr.appendChild(td3); tr.appendChild(td4);
       filas.appendChild(tr);
     });
 
@@ -341,9 +351,10 @@
   });
 
   document.getElementById('btnCsv').addEventListener('click', function () {
-    var lineas = ['Familia,Boletos,Confirmo'];
+    var lineas = ['Familia,Codigo,Boletos,Confirmo'];
     datos.forEach(function (f) {
-      lineas.push('"' + String(f.apellido).replace(/"/g, '""') + '",' + f.boletos + ',"' + fecha(f.creado_en) + '"');
+      lineas.push('"' + String(f.apellido).replace(/"/g, '""') + '","' +
+                  (f.codigo || '') + '",' + f.boletos + ',"' + fecha(f.creado_en) + '"');
     });
     var blob = new Blob(['﻿' + lineas.join('\r\n')], { type: 'text/csv;charset=utf-8' });
     var a = document.createElement('a');

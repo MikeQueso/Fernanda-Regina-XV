@@ -684,10 +684,16 @@ img,svg{ display:block; max-width:100%; }
   transition:background .18s;
 }
 .rsvp__op:hover,.rsvp__op:focus{ background:rgba(179,0,27,.34); }
-.rsvp__op span{ font-size:1rem; color:var(--cream); }
-.rsvp__op i{
-  flex:none; font-style:normal; font-family:var(--f-title);
-  font-size:.54rem; letter-spacing:.14em; text-transform:uppercase; color:var(--gold);
+.rsvp__op{ font-size:1rem; color:var(--cream); }
+
+/* Campo del código */
+.rsvp__codigo{
+  letter-spacing:.3em; text-align:center;
+  font-family:var(--f-title) !important; font-size:1.16rem !important;
+}
+.rsvp__ayuda{
+  margin:7px 0 0; font-size:.86rem; font-style:italic;
+  color:rgba(245,236,224,.42);
 }
 
 /* Tarjeta con los boletos de la familia */
