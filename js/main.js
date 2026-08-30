@@ -170,7 +170,7 @@
     var fig = $('#vestReina');
     if (!img || !fig) return;
 
-    var alternativas = ['assets/img/reina.png', 'assets/img/reina.jpeg', 'assets/img/reina.webp'];
+    var alternativas = ['assets/img/reina.jpg', 'assets/img/reina.jpeg', 'assets/img/reina.webp'];
 
     img.addEventListener('error', function () {
       var siguiente = alternativas.shift();
