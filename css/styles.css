@@ -750,8 +750,12 @@ img,svg{ display:block; max-width:100%; }
   color:rgba(245,236,224,.8);
 }
 .rsvp__hechoTxt{
-  margin:0 0 22px; font-family:var(--f-title);
+  margin:0 0 20px; font-family:var(--f-title);
   font-size:.66rem; letter-spacing:.2em; text-transform:uppercase; color:var(--gold-lt);
+}
+.rsvp__hechoPide{
+  margin:0 0 14px; font-size:.96rem; font-style:italic;
+  color:rgba(245,236,224,.62);
 }
 
 /* ====================== CIERRE ====================== */

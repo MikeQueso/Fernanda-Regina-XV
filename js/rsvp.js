@@ -187,8 +187,9 @@
       try { localStorage.setItem(LLAVE, JSON.stringify(elegida)); } catch (e) {}
 
       decir('');
+      // No se abre WhatsApp solo: taparía el mensaje antes de leerlo.
+      // El invitado lo manda desde el botón de la pantalla final.
       mostrarHecho(elegida);
-      window.open(enlaceWa(elegida), '_blank', 'noopener');
     })["catch"](function (err) {
       btn.disabled = false;
       decir('No se pudo guardar. Revisa tu conexión e intenta de nuevo.', true);
