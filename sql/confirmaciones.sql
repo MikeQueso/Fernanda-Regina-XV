@@ -97,13 +97,17 @@ begin
   if clave is distinct from public.clave_panel() then
     raise exception 'Clave incorrecta' using errcode = '28000';
   end if;
-  -- El "where true" es obligatorio: Supabase rechaza los DELETE sin
+  -- El "where true" no es opcional: Supabase rechaza los DELETE sin
   -- WHERE como protección contra borrados accidentales.
   delete from public.confirmaciones where true;
   get diagnostics borradas = row_count;
   return borradas;
 end;
 $$;
+
+-- Nota: en esta base la clave quedó como se instaló y el usuario decidió
+-- conservarla. Para cambiarla basta con editar clave_panel() y volver a
+-- ejecutar solo esa función.
 
 
 revoke all on function public.ver_confirmaciones(text) from public;
