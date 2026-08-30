@@ -288,8 +288,8 @@ img,svg{ display:block; max-width:100%; }
 /* Soldados naipe (guardias) */
 .sec--guards{ padding-bottom:96px; }
 .guard{
-  bottom:0; width:150px; opacity:.22;
-  filter:grayscale(.25) drop-shadow(0 0 24px rgba(0,0,0,.9));
+  bottom:0; width:172px; opacity:.72;
+  filter:saturate(1.1) contrast(1.05) drop-shadow(0 0 26px rgba(0,0,0,.9));
 }
 .guard--l{ left:-42px;  transform:rotate(4deg)  scaleX(-1); }
 .guard--r{ right:-42px; transform:rotate(-4deg); }
@@ -834,7 +834,7 @@ img,svg{ display:block; max-width:100%; }
   .rose--count{ width:92px; right:-36px; }
   .rose--rsvp{ width:100px; right:-40px; }
   .rose--gift{ width:84px; left:-32px; }
-  .guard{ width:116px; }
+  .guard{ width:136px; }
   .cal{ padding:16px 10px 12px; }
   .cal__grid span{ font-size:.76rem; }
 }
@@ -844,7 +844,7 @@ img,svg{ display:block; max-width:100%; }
   .rose--tr{ width:200px; right:-46px; }
   .rose--br{ width:220px; right:-56px; }
   .bouquet--hero{ width:210px; left:-46px; }
-  .guard{ width:210px; opacity:.13; }
+  .guard{ width:240px; opacity:.68; }
 }
 
 @media (prefers-reduced-motion:reduce){

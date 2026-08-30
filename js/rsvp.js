@@ -76,6 +76,16 @@
     if (previo && previo.apellido) { mostrarHecho(previo); return; }
   } catch (e) { /* almacenamiento bloqueado: sigue normal */ }
 
+  /* ---- sin lista de invitados todavía ----
+     Sin familias cargadas el formulario rechazaría a todo el mundo,
+     así que en su lugar se muestra un aviso de que falta poco. */
+  if (!FAMILIAS.length) {
+    form.hidden = true;
+    var espera = document.getElementById('rsvpEspera');
+    if (espera) espera.hidden = false;
+    return;
+  }
+
   /* ---- sugerencias de apellido ----
      Se muestran apellidos sin repetir: si hay dos familias con el
      mismo, en la lista aparece una sola vez y el código decide cuál.
