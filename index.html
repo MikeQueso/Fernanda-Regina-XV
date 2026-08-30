@@ -333,25 +333,22 @@
       <p class="sub">Por favor confirma tu asistencia lo antes posible</p>
 
       <form class="rsvp" id="rsvpForm" novalidate>
-        <label class="rsvp__campo">
-          <span class="rsvp__lbl">Apellido de la familia</span>
+        <div class="rsvp__campo rsvp__busca">
+          <label class="rsvp__lbl" for="rsvpApellido">Escribe el apellido de tu familia</label>
           <input type="text" id="rsvpApellido" name="apellido" required
-                 maxlength="60" autocomplete="family-name">
-        </label>
+                 maxlength="60" autocomplete="off" autocapitalize="words"
+                 role="combobox" aria-expanded="false" aria-autocomplete="list"
+                 aria-controls="rsvpLista">
+          <ul class="rsvp__sug" id="rsvpLista" role="listbox" hidden></ul>
+        </div>
 
-        <label class="rsvp__campo">
-          <span class="rsvp__lbl">Boletos que apartan</span>
-          <select id="rsvpBoletos" name="boletos" required>
-            <option value="">Selecciona…</option>
-          </select>
-        </label>
+        <div class="rsvp__hallada" id="rsvpHallada" hidden>
+          <p class="rsvp__hFam" id="rsvpHFam"></p>
+          <p class="rsvp__hBol"><b id="rsvpHNum">0</b> <span id="rsvpHTxt">boletos</span></p>
+          <p class="rsvp__hNota">Boletos apartados para tu familia</p>
+        </div>
 
-        <p class="rsvp__aviso">
-          <b>Importante:</b> una vez enviada la cantidad de boletos
-          <b>ya no podrá modificarse</b>. Revísala antes de confirmar.
-        </p>
-
-        <button class="btn btn--wa" type="submit" id="rsvpBtn">
+        <button class="btn btn--wa" type="submit" id="rsvpBtn" disabled>
           <svg viewBox="0 0 24 24" class="btn__wa"><path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2m0 18.15h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.23 8.25-8.23a8.2 8.2 0 0 1 8.24 8.24c0 4.54-3.7 8.23-8.24 8.23m4.52-6.16c-.25-.12-1.47-.72-1.69-.81s-.39-.12-.56.12-.64.81-.79.98-.29.19-.54.06-1.05-.39-1.99-1.23c-.74-.66-1.24-1.47-1.38-1.72s-.02-.38.11-.5c.11-.11.25-.29.37-.43s.17-.25.25-.41.04-.31-.02-.43-.56-1.34-.76-1.84c-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31s-.87.85-.87 2.07.89 2.4 1.02 2.57 1.76 2.67 4.25 3.75c.59.26 1.06.41 1.42.52.6.19 1.14.16 1.57.1.48-.07 1.47-.6 1.68-1.18s.21-1.08.15-1.18-.23-.18-.48-.3"/></svg>
           Confirmar asistencia
         </button>
@@ -361,7 +358,13 @@
 
       <div class="rsvp__hecho" id="rsvpHecho" hidden>
         <b class="ornament__heart"></b>
-        <p class="rsvp__hechoTit">¡Confirmación recibida!</p>
+        <p class="rsvp__gracias">
+          Muchas gracias por acompañarnos<br>
+          familia <span id="rsvpGraciasFam"></span>,
+        </p>
+        <p class="rsvp__graciasSub">
+          esperamos verte muy pronto en este evento tan especial para nosotros
+        </p>
         <p class="rsvp__hechoTxt" id="rsvpHechoTxt"></p>
         <a class="btn btn--wa" id="rsvpWa" href="#" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24" class="btn__wa"><path fill="currentColor" d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2m0 18.15h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.23 8.25-8.23a8.2 8.2 0 0 1 8.24 8.24c0 4.54-3.7 8.23-8.24 8.23m4.52-6.16c-.25-.12-1.47-.72-1.69-.81s-.39-.12-.56.12-.64.81-.79.98-.29.19-.54.06-1.05-.39-1.99-1.23c-.74-.66-1.24-1.47-1.38-1.72s-.02-.38.11-.5c.11-.11.25-.29.37-.43s.17-.25.25-.41.04-.31-.02-.43-.56-1.34-.76-1.84c-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31s-.87.85-.87 2.07.89 2.4 1.02 2.57 1.76 2.67 4.25 3.75c.59.26 1.06.41 1.42.52.6.19 1.14.16 1.57.1.48-.07 1.47-.6 1.68-1.18s.21-1.08.15-1.18-.23-.18-.48-.3"/></svg>
@@ -389,6 +392,7 @@
 </main>
 
 <script src="js/supabase-config.js"></script>
+<script src="js/familias.js"></script>
 <script src="js/main.js"></script>
 <script src="js/album.js"></script>
 <script src="js/rsvp.js"></script>

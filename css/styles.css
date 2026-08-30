@@ -347,15 +347,19 @@ img,svg{ display:block; max-width:100%; }
   letter-spacing:.24em; text-transform:uppercase; color:var(--gold-lt);
 }
 .hero__scroll{
-  position:absolute; bottom:26px; left:50%; transform:translateX(-50%); z-index:5;
-  width:22px; height:36px; border:1px solid rgba(212,175,55,.5); border-radius:12px;
+  position:absolute; bottom:28px; left:0; right:0; margin-inline:auto; z-index:5;
+  width:30px; height:30px;
 }
 .hero__scroll span{
-  position:absolute; left:50%; top:7px; margin-left:-2px;
-  width:4px; height:7px; border-radius:2px; background:var(--gold);
-  animation:scrollDot 1.9s ease-in-out infinite;
+  position:absolute; left:50%; top:50%;
+  width:15px; height:15px; margin:-11px 0 0 -8px;
+  border-right:2px solid var(--gold); border-bottom:2px solid var(--gold);
+  animation:flechaAbajo 1.9s ease-in-out infinite;
 }
-@keyframes scrollDot{ 0%{ transform:translateY(0); opacity:1;} 70%{ transform:translateY(15px); opacity:0;} 100%{opacity:0;} }
+@keyframes flechaAbajo{
+  0%,100%{ transform:rotate(45deg) translate(0,0);   opacity:.45; }
+  50%    { transform:rotate(45deg) translate(5px,5px); opacity:1; }
+}
 
 /* ====================== FRASE ====================== */
 .sec--quote{ padding:70px 0 66px; background:linear-gradient(180deg, rgba(42,7,16,.5), transparent); }
@@ -652,7 +656,7 @@ img,svg{ display:block; max-width:100%; }
   font-family:var(--f-title); font-size:.55rem;
   letter-spacing:.26em; text-transform:uppercase; color:var(--gold);
 }
-.rsvp input,.rsvp select{
+.rsvp input{
   width:100%; padding:12px 14px;
   font-family:var(--f-body); font-size:1.02rem; color:var(--cream);
   background:rgba(10,3,6,.7);
@@ -660,25 +664,58 @@ img,svg{ display:block; max-width:100%; }
   transition:border-color .3s, box-shadow .3s;
   -webkit-appearance:none; appearance:none;
 }
-.rsvp select{
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23d4af37' stroke-width='1.6'/%3E%3C/svg%3E");
-  background-repeat:no-repeat; background-position:right 14px center; background-size:12px;
-  padding-right:38px; cursor:pointer;
-}
-.rsvp input::placeholder{ color:rgba(245,236,224,.3); font-style:italic; }
-.rsvp input:focus,.rsvp select:focus{
+.rsvp input:focus{
   outline:none; border-color:var(--gold);
   box-shadow:0 0 0 3px rgba(212,175,55,.14);
 }
-.rsvp option{ background:#14060a; color:var(--cream); }
 
-.rsvp__aviso{
-  margin:0 0 20px; padding:12px 14px;
-  border-left:2px solid var(--red-br); border-radius:2px;
-  background:rgba(179,0,27,.14);
-  font-size:.92rem; line-height:1.55; color:rgba(245,236,224,.8);
+/* Sugerencias de apellido */
+.rsvp__busca{ position:relative; }
+.rsvp__sug{
+  position:absolute; left:0; right:0; top:calc(100% + 4px); z-index:20;
+  margin:0; padding:4px; list-style:none;
+  max-height:246px; overflow-y:auto;
+  background:#160710; border:1px solid rgba(212,175,55,.45); border-radius:3px;
+  box-shadow:0 14px 34px rgba(0,0,0,.75);
 }
-.rsvp__aviso b{ color:var(--gold-lt); font-weight:500; }
+.rsvp__op{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:11px 12px; border-radius:2px; cursor:pointer;
+  transition:background .18s;
+}
+.rsvp__op:hover,.rsvp__op:focus{ background:rgba(179,0,27,.34); }
+.rsvp__op span{ font-size:1rem; color:var(--cream); }
+.rsvp__op i{
+  flex:none; font-style:normal; font-family:var(--f-title);
+  font-size:.54rem; letter-spacing:.14em; text-transform:uppercase; color:var(--gold);
+}
+
+/* Tarjeta con los boletos de la familia */
+.rsvp__hallada{
+  margin:0 0 20px; padding:20px 16px; text-align:center;
+  border:1px solid rgba(212,175,55,.45); border-radius:4px;
+  background:linear-gradient(180deg, rgba(179,0,27,.24), rgba(255,255,255,.02));
+  animation:aparece .45s ease both;
+}
+@keyframes aparece{ from{ opacity:0; transform:translateY(-8px); } to{ opacity:1; transform:none; } }
+.rsvp__hFam{
+  margin:0 0 10px; font-family:var(--f-title); font-size:.76rem;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--cream);
+}
+.rsvp__hBol{ margin:0; line-height:1; }
+.rsvp__hBol b{
+  font-family:var(--f-title); font-weight:500; font-size:2.6rem;
+  background:linear-gradient(180deg,#f8ecc0,#d4af37 50%,#a67c1e);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.rsvp__hBol span{
+  font-family:var(--f-title); font-size:.62rem;
+  letter-spacing:.24em; text-transform:uppercase; color:var(--gold);
+}
+.rsvp__hNota{
+  margin:10px 0 0; font-size:.86rem; font-style:italic;
+  color:rgba(245,236,224,.5);
+}
 
 .rsvp #rsvpBtn{ width:100%; }
 .rsvp__estado{
@@ -693,14 +730,28 @@ img,svg{ display:block; max-width:100%; }
   border:1px solid rgba(212,175,55,.4); border-radius:4px;
   background:rgba(179,0,27,.12);
 }
-.rsvp__hecho .ornament__heart{ margin:0 auto 12px; width:20px; height:20px; }
-.rsvp__hechoTit{
-  margin:0 0 6px; font-family:var(--f-script);
-  font-size:2.1rem; line-height:1; color:var(--gold-lt);
+.rsvp__hecho{ text-align:center; }
+.rsvp__hecho .ornament__heart{ margin:0 auto 16px; width:22px; height:22px; }
+
+/* El agradecimiento, en grande */
+.rsvp__gracias{
+  margin:0 0 10px; font-family:var(--f-script); font-weight:400;
+  font-size:clamp(2.1rem,8.4vw,2.9rem); line-height:1.12;
+  color:var(--cream);
+  text-shadow:0 2px 26px rgba(213,20,46,.4);
+}
+.rsvp__gracias span{
+  background:linear-gradient(180deg,#f8ecc0,#d4af37 50%,#a67c1e);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.rsvp__graciasSub{
+  margin:0 auto 18px; max-width:28ch;
+  font-size:1.04rem; line-height:1.65;
+  color:rgba(245,236,224,.8);
 }
 .rsvp__hechoTxt{
-  margin:0 0 20px; font-family:var(--f-title);
-  font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; color:var(--cream);
+  margin:0 0 22px; font-family:var(--f-title);
+  font-size:.66rem; letter-spacing:.2em; text-transform:uppercase; color:var(--gold-lt);
 }
 
 /* ====================== CIERRE ====================== */
