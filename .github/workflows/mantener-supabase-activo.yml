@@ -21,12 +21,21 @@ jobs:
           URL="https://yhywubvveqnlgpkhrdgz.supabase.co"
           KEY="sb_publishable_ZP2257ZkDMN9FOaPgp51Mw_iXpGwOaR"
 
+          # Se consulta el bucket del álbum: es una petición real que
+          # responde 200. La raíz de /rest/v1/ devuelve 401 con la clave
+          # publicable, así que no sirve para comprobar que está vivo.
           code=$(curl -sS -o /dev/null -w '%{http_code}' \
-            "$URL/rest/v1/" -H "apikey: $KEY")
+            -X POST "$URL/storage/v1/object/list/album" \
+            -H "apikey: $KEY" \
+            -H "Authorization: Bearer $KEY" \
+            -H "Content-Type: application/json" \
+            -d '{"prefix":"fotos/","limit":1,"offset":0}')
 
-          echo "Respuesta de la API: HTTP $code"
+          echo "Respuesta de Supabase: HTTP $code"
 
-          if [ "$code" = "000" ]; then
-            echo "::error::El proyecto no responde. Puede estar pausado o eliminado; revísalo en el panel de Supabase."
+          if [ "$code" != "200" ]; then
+            echo "::error::El proyecto no respondió correctamente (HTTP $code). Puede estar pausado; revísalo en el panel de Supabase."
             exit 1
           fi
+
+          echo "Proyecto activo."

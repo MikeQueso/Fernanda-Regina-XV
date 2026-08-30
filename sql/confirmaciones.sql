@@ -17,6 +17,13 @@ create table if not exists public.confirmaciones (
 
 alter table public.confirmaciones enable row level security;
 
+-- En Postgres el permiso de tabla y la política de RLS son dos cosas
+-- distintas: la política decide QUÉ filas, el grant decide SI se puede
+-- tocar la tabla. Sin este grant, insertar falla con "permission denied"
+-- aunque la política sea correcta.
+-- Solo insert: nunca select, update ni delete para los invitados.
+grant insert on public.confirmaciones to anon;
+
 
 -- ---------- 2. Permisos de los invitados ----------
 -- Solo INSERT. Sin select, update ni delete: una vez enviada la
@@ -54,7 +61,57 @@ revoke all on function public.ver_confirmaciones(text) from public;
 grant execute on function public.ver_confirmaciones(text) to anon;
 
 
+-- ---------- 4. Borrado, solo con la clave ----------
+-- Sirve para limpiar las pruebas. Los invitados siguen sin poder borrar:
+-- no existe política de delete para anon, y estas funciones exigen la clave.
+
+create or replace function public.borrar_confirmacion(clave text, fila_id uuid)
+returns integer
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  borradas integer;
+begin
+  -- ↓↓↓ LA MISMA CLAVE DE ARRIBA ↓↓↓
+  if clave is distinct from 'CAMBIA-ESTA-CLAVE' then
+    raise exception 'Clave incorrecta' using errcode = '28000';
+  end if;
+
+  delete from public.confirmaciones where id = fila_id;
+  get diagnostics borradas = row_count;
+  return borradas;
+end;
+$$;
+
+create or replace function public.borrar_todas_confirmaciones(clave text)
+returns integer
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  borradas integer;
+begin
+  -- ↓↓↓ LA MISMA CLAVE DE ARRIBA ↓↓↓
+  if clave is distinct from 'CAMBIA-ESTA-CLAVE' then
+    raise exception 'Clave incorrecta' using errcode = '28000';
+  end if;
+
+  delete from public.confirmaciones;
+  get diagnostics borradas = row_count;
+  return borradas;
+end;
+$$;
+
+revoke all on function public.borrar_confirmacion(text, uuid) from public;
+revoke all on function public.borrar_todas_confirmaciones(text) from public;
+grant execute on function public.borrar_confirmacion(text, uuid) to anon;
+grant execute on function public.borrar_todas_confirmaciones(text) to anon;
+
+
 -- ============================================================
---  Comprobación rápida (opcional): debe devolver 1 fila
+--  Comprobación rápida (opcional): no debe dar error
 -- ============================================================
 -- select * from public.ver_confirmaciones('CAMBIA-ESTA-CLAVE');

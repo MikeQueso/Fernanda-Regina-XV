@@ -112,6 +112,23 @@
   .fecha{ white-space:nowrap; font-size:.88rem; color:rgba(245,236,224,.5); }
 
   .vacio{ padding:40px 20px; text-align:center; font-style:italic; color:rgba(245,236,224,.45); }
+
+  /* borrar */
+  .colX{ width:44px; }
+  .x{
+    width:28px; height:28px; padding:0; cursor:pointer;
+    border:1px solid rgba(255,120,140,.35); border-radius:50%;
+    background:transparent; color:#ff8a9c; font-size:1.1rem; line-height:1;
+    transition:background .2s, border-color .2s, color .2s;
+  }
+  .x:hover{ background:rgba(213,20,46,.25); border-color:#ff8a9c; color:#fff; }
+  .x:disabled{ opacity:.4; cursor:wait; }
+  .btn--peligro{ border-color:rgba(255,120,140,.5); color:#ff8a9c; }
+  .btn--peligro:hover{ background:var(--red); color:#fff; }
+  .nota{
+    margin:14px 0 0; text-align:center; font-size:.86rem;
+    font-style:italic; color:rgba(245,236,224,.4);
+  }
 </style>
 </head>
 <body>
@@ -142,18 +159,26 @@
     <div class="barra">
       <button class="btn btn--min" type="button" id="btnRecargar">Actualizar</button>
       <button class="btn btn--min" type="button" id="btnCsv">Descargar CSV</button>
+      <button class="btn btn--min btn--peligro" type="button" id="btnVaciar">Borrar todo</button>
       <button class="btn btn--min" type="button" id="btnSalir">Salir</button>
     </div>
 
     <div class="tablaEnv">
       <table>
         <thead>
-          <tr><th>Familia</th><th style="text-align:center">Boletos</th><th>Confirmó</th></tr>
+          <tr>
+            <th>Familia</th>
+            <th style="text-align:center">Boletos</th>
+            <th>Confirmó</th>
+            <th class="colX"></th>
+          </tr>
         </thead>
         <tbody id="filas"></tbody>
       </table>
       <p class="vacio" id="vacio" hidden>Todavía no hay confirmaciones.</p>
     </div>
+
+    <p class="nota">Borrar es solo para ti: los invitados no pueden eliminar nada.</p>
   </div>
 </div>
 
@@ -176,20 +201,32 @@
 
   var datos = [];
 
-  function pedir(clave) {
-    return fetch(CFG.url.replace(/\/+$/, '') + '/rest/v1/rpc/ver_confirmaciones', {
+  function rpc(nombre, cuerpo) {
+    return fetch(CFG.url.replace(/\/+$/, '') + '/rest/v1/rpc/' + nombre, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         apikey: CFG.anonKey,
         Authorization: 'Bearer ' + CFG.anonKey
       },
-      body: JSON.stringify({ clave: clave })
+      body: JSON.stringify(cuerpo)
     }).then(function (r) {
       if (r.status === 401 || r.status === 403 || r.status === 400) throw new Error('clave');
+      if (r.status === 404) throw new Error('falta-sql');
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return r.json();
     });
+  }
+
+  function pedir(clave) { return rpc('ver_confirmaciones', { clave: clave }); }
+
+  function clave() {
+    try { return sessionStorage.getItem(LLAVE); } catch (e) { return null; }
+  }
+
+  function recargar() {
+    var c = clave();
+    if (c) pedir(c).then(pintar)["catch"](function () {});
   }
 
   function fecha(iso) {
@@ -220,7 +257,29 @@
       td3.className = 'fecha';
       td3.textContent = fecha(f.creado_en);
 
-      tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3);
+      var td4 = document.createElement('td');
+      td4.className = 'colX';
+      var x = document.createElement('button');
+      x.className = 'x';
+      x.type = 'button';
+      x.innerHTML = '&times;';
+      x.title = 'Borrar esta confirmación';
+      x.setAttribute('aria-label', 'Borrar la confirmación de ' + f.apellido);
+      x.addEventListener('click', function () {
+        if (!window.confirm('¿Borrar la confirmación de la familia ' + f.apellido + '?')) return;
+        x.disabled = true;
+        rpc('borrar_confirmacion', { clave: clave(), fila_id: f.id })
+          .then(recargar)
+          ["catch"](function (err) {
+            x.disabled = false;
+            window.alert(err.message === 'falta-sql'
+              ? 'Falta correr la parte de borrado del SQL.'
+              : 'No se pudo borrar. Intenta de nuevo.');
+          });
+      });
+      td4.appendChild(x);
+
+      tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3); tr.appendChild(td4);
       filas.appendChild(tr);
     });
 
@@ -257,9 +316,23 @@
     if (inputCl.value) entrar(inputCl.value, true);
   });
 
-  document.getElementById('btnRecargar').addEventListener('click', function () {
-    var c = sessionStorage.getItem(LLAVE);
-    if (c) pedir(c).then(pintar)["catch"](function () {});
+  document.getElementById('btnRecargar').addEventListener('click', recargar);
+
+  document.getElementById('btnVaciar').addEventListener('click', function () {
+    if (!datos.length) { window.alert('No hay nada que borrar.'); return; }
+    if (!window.confirm('Se van a borrar las ' + datos.length +
+        ' confirmaciones. Esto no se puede deshacer. ¿Continuar?')) return;
+    if (!window.confirm('Última confirmación: ¿borrar TODO?')) return;
+
+    rpc('borrar_todas_confirmaciones', { clave: clave() })
+      .then(function (n) {
+        window.alert('Se borraron ' + n + ' confirmaciones.');
+        recargar();
+      })["catch"](function (err) {
+        window.alert(err.message === 'falta-sql'
+          ? 'Falta correr la parte de borrado del SQL.'
+          : 'No se pudo borrar. Intenta de nuevo.');
+      });
   });
 
   document.getElementById('btnSalir').addEventListener('click', function () {

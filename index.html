@@ -262,12 +262,11 @@
         Menos color <b>rojo</b>…<br>
         y quien haga lo contrario
       </p>
-      <!-- Si la imagen aún no existe, la ficha se oculta sola en vez de
-           dejar un recuadro roto. -->
+      <!-- Acepta reina.jpg o reina.png; si no existe ninguna, la ficha se
+           oculta sola en vez de dejar un recuadro roto (ver main.js). -->
       <figure class="vest__reina" id="vestReina">
-        <img src="assets/img/reina.jpg" loading="lazy"
-             alt="La Reina de Corazones gritando: ¡perderá la cabeza!"
-             onerror="document.getElementById('vestReina').hidden=true">
+        <img id="vestReinaImg" src="assets/img/reina.jpg" loading="lazy"
+             alt="La Reina de Corazones gritando: ¡perderá la cabeza!">
       </figure>
     </div>
   </section>
@@ -337,8 +336,7 @@
         <label class="rsvp__campo">
           <span class="rsvp__lbl">Apellido de la familia</span>
           <input type="text" id="rsvpApellido" name="apellido" required
-                 maxlength="60" autocomplete="family-name"
-                 placeholder="Ej. García Fernández">
+                 maxlength="60" autocomplete="family-name">
         </label>
 
         <label class="rsvp__campo">

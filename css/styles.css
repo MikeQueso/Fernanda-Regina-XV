@@ -361,14 +361,17 @@ img,svg{ display:block; max-width:100%; }
 .sec--quote{ padding:70px 0 66px; background:linear-gradient(180deg, rgba(42,7,16,.5), transparent); }
 
 /* Padres y padrinos */
-.familia{ margin-top:38px; }
+.familia{ margin-top:44px; }
 .familia__rol{
-  margin:0 0 8px; font-family:var(--f-title);
-  font-size:.58rem; letter-spacing:.36em; text-transform:uppercase;
-  color:var(--gold);
+  margin:0 0 14px; font-family:var(--f-title); font-weight:600;
+  font-size:clamp(1rem,4.4vw,1.24rem);
+  letter-spacing:.24em; text-transform:uppercase;
+  background:linear-gradient(180deg,#f8ecc0,#d4af37 48%,#a67c1e);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  filter:drop-shadow(0 2px 12px rgba(212,175,55,.28));
 }
 .familia__nombres{
-  margin:0; font-size:1.06rem; line-height:1.85;
+  margin:0; font-size:1.14rem; line-height:1.9;
   color:var(--cream); letter-spacing:.02em;
 }
 .familia__sep{

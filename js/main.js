@@ -161,7 +161,26 @@
   }
 
   /* ==========================================================
-     6. NAIPES CAYENDO + POLVO DORADO
+     6. IMAGEN DE LA REINA (vestimenta)
+     Sirve tanto reina.jpg como reina.png. Si no hay ninguna,
+     la ficha se esconde en lugar de dejar un recuadro roto.
+     ========================================================== */
+  (function reina() {
+    var img = $('#vestReinaImg');
+    var fig = $('#vestReina');
+    if (!img || !fig) return;
+
+    var alternativas = ['assets/img/reina.png', 'assets/img/reina.jpeg', 'assets/img/reina.webp'];
+
+    img.addEventListener('error', function () {
+      var siguiente = alternativas.shift();
+      if (siguiente) img.src = siguiente;
+      else fig.hidden = true;
+    });
+  })();
+
+  /* ==========================================================
+     7. NAIPES CAYENDO + POLVO DORADO
      ========================================================== */
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
