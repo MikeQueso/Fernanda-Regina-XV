@@ -14,6 +14,9 @@ window.SUPABASE = {
   // NUNCA pongas aquí la clave service_role.
   anonKey: 'sb_publishable_ZP2257ZkDMN9FOaPgp51Mw_iXpGwOaR',
 
-  // Bucket privado de Storage donde caen las fotos
+  // Bucket público de Storage donde caen las fotos
   bucket: 'album'
 };
+
+/* Número de WhatsApp que recibe los avisos (con clave de país). */
+window.WHATSAPP = '525611419206';

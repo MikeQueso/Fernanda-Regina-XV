@@ -10,11 +10,14 @@ Invitación digital de una sola página. Tema: **La Reina de Corazones**
 ## Estructura
 
 ```
-index.html                  Toda la página
+index.html                  La invitación
+confirmaciones.html         Panel privado con quién confirmó (pide clave)
 css/styles.css              Estilos
 js/main.js                  Contador, calendario, música, animaciones
-js/album.js                 Subida de fotos a Supabase
-js/supabase-config.js       ← AQUÍ van tus claves y las cartas
+js/album.js                 Álbum de fotos (Supabase Storage)
+js/rsvp.js                  Confirmación de asistencia
+js/supabase-config.js       ← AQUÍ van la URL y la clave publicable
+sql/confirmaciones.sql      Script a ejecutar una vez en Supabase
 assets/audio/cancion.mp3    Música de fondo
 assets/img/                 Rosas, gato, soldado, cartas
 ```
@@ -41,10 +44,10 @@ Y abrir <http://localhost:5173>.
 | Fotos de Fernanda Regina | pendiente |
 | Hora de la recepción | pendiente |
 | Itinerario | pendiente |
-| Código de vestimenta | pendiente |
 | Datos de regalos | pendiente |
-| Cartas recortadas | pendiente |
-| Álbum (Supabase) | falta configurar |
+| Imagen de la Reina (vestimenta) | falta `assets/img/reina.jpg` |
+| Álbum de fotos | listo |
+| Confirmaciones | falta correr `sql/confirmaciones.sql` |
 
 Las secciones pendientes ya están maquetadas y muestran un aviso de
 "Próximamente". Para activarlas solo se llena el contenido y se borra su
@@ -112,6 +115,43 @@ para miles de fotos en vez de doscientas.
 
 Los videos se suben tal cual, sin recomprimir, y salen en la galería con un
 ícono de reproducir.
+
+---
+
+---
+
+## Confirmaciones de asistencia
+
+1. Abrir `sql/confirmaciones.sql`, **cambiar `CAMBIA-ESTA-CLAVE`** por la
+   contraseña con la que quieras entrar al panel.
+2. Pegar todo en **SQL Editor → New query** y darle **Run**.
+
+Los invitados confirman desde la invitación: apellido de la familia y
+número de boletos. Solo tienen permiso de `insert`, así que **una vez
+enviada la cantidad no se puede cambiar ni borrar** — lo impide la base de
+datos, no el navegador.
+
+La lista se ve en `confirmaciones.html`, que pide la clave. Esa página no
+está enlazada desde la invitación.
+
+> La lista **no** es legible con la clave publicable: se lee a través de una
+> función `security definer` que exige la contraseña. Sin ella, ni siquiera
+> conociendo la URL se puede sacar quién viene.
+
+---
+
+## Que Supabase no se pause
+
+Los proyectos gratuitos se pausan tras ~7 días sin actividad, y al pausarse
+la invitación deja de guardar fotos y confirmaciones.
+
+`.github/workflows/mantener-supabase-activo.yml` le manda una petición cada
+3 días desde GitHub Actions para evitarlo. Si el proyecto no responde, la
+ejecución falla y GitHub avisa por correo.
+
+> GitHub desactiva los workflows programados si el repositorio pasa 60 días
+> sin commits. Si se acerca la fecha y no has tocado nada, entra a la pestaña
+> **Actions** y ejecútalo a mano una vez para reactivarlo.
 
 ---
 

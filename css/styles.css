@@ -269,7 +269,7 @@ img,svg{ display:block; max-width:100%; }
 
 /* Ramo vertical */
 .bouquet--hero{ width:150px; bottom:0; left:-58px;  --r:6deg;   transform:rotate(6deg);   animation:sway 13s ease-in-out infinite; }
-.bouquet--rsvp{ width:132px; bottom:0; left:-52px;  --r:-6deg;  transform:rotate(-6deg);  animation:sway 14s ease-in-out infinite reverse; }
+.bouquet--rsvp{ width:120px; bottom:0; left:-84px;  --r:-6deg;  transform:rotate(-6deg);  animation:sway 14s ease-in-out infinite reverse; }
 
 /* Gato de Cheshire */
 .cat--hero{
@@ -359,6 +359,43 @@ img,svg{ display:block; max-width:100%; }
 
 /* ====================== FRASE ====================== */
 .sec--quote{ padding:70px 0 66px; background:linear-gradient(180deg, rgba(42,7,16,.5), transparent); }
+
+/* Padres y padrinos */
+.familia{ margin-top:38px; }
+.familia__rol{
+  margin:0 0 8px; font-family:var(--f-title);
+  font-size:.58rem; letter-spacing:.36em; text-transform:uppercase;
+  color:var(--gold);
+}
+.familia__nombres{
+  margin:0; font-size:1.06rem; line-height:1.85;
+  color:var(--cream); letter-spacing:.02em;
+}
+.familia__sep{
+  display:flex; align-items:center; justify-content:center; gap:12px;
+  margin:24px auto;
+}
+.familia__sep span{ width:48px; height:1px; background:linear-gradient(90deg,transparent,var(--gold)); }
+.familia__sep span:last-child{ background:linear-gradient(90deg,var(--gold),transparent); }
+
+/* ====================== VESTIMENTA ====================== */
+.vest__formal{
+  margin:0 0 20px; font-family:var(--f-title);
+  font-size:.72rem; letter-spacing:.4em; text-transform:uppercase;
+  color:var(--gold-lt);
+}
+.vest__regla{
+  margin:0 auto 26px; max-width:24ch;
+  font-size:1.1rem; line-height:1.7; color:var(--cream);
+}
+.vest__regla b{ color:var(--red-br); font-weight:500; letter-spacing:.04em; }
+.vest__reina{
+  margin:0 auto; width:min(320px,84vw);
+  border:1px solid rgba(212,175,55,.4); border-radius:4px;
+  overflow:hidden; background:rgba(0,0,0,.4);
+  box-shadow:0 12px 34px rgba(0,0,0,.7);
+}
+.vest__reina img{ width:100%; height:auto; }
 
 /* ====================== CONTADOR ====================== */
 .sec--count{ padding-top:64px; }
@@ -604,6 +641,65 @@ img,svg{ display:block; max-width:100%; }
 }
 .rsvp__note{ margin:16px auto 0; max-width:30ch; font-size:.86rem; font-style:italic; color:rgba(245,236,224,.42); }
 
+/* Formulario de confirmación */
+.rsvp{ margin:6px auto 0; width:min(360px,88vw); text-align:left; }
+.rsvp__campo{ display:block; margin-bottom:16px; }
+.rsvp__lbl{
+  display:block; margin-bottom:7px;
+  font-family:var(--f-title); font-size:.55rem;
+  letter-spacing:.26em; text-transform:uppercase; color:var(--gold);
+}
+.rsvp input,.rsvp select{
+  width:100%; padding:12px 14px;
+  font-family:var(--f-body); font-size:1.02rem; color:var(--cream);
+  background:rgba(10,3,6,.7);
+  border:1px solid rgba(212,175,55,.38); border-radius:3px;
+  transition:border-color .3s, box-shadow .3s;
+  -webkit-appearance:none; appearance:none;
+}
+.rsvp select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23d4af37' stroke-width='1.6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 14px center; background-size:12px;
+  padding-right:38px; cursor:pointer;
+}
+.rsvp input::placeholder{ color:rgba(245,236,224,.3); font-style:italic; }
+.rsvp input:focus,.rsvp select:focus{
+  outline:none; border-color:var(--gold);
+  box-shadow:0 0 0 3px rgba(212,175,55,.14);
+}
+.rsvp option{ background:#14060a; color:var(--cream); }
+
+.rsvp__aviso{
+  margin:0 0 20px; padding:12px 14px;
+  border-left:2px solid var(--red-br); border-radius:2px;
+  background:rgba(179,0,27,.14);
+  font-size:.92rem; line-height:1.55; color:rgba(245,236,224,.8);
+}
+.rsvp__aviso b{ color:var(--gold-lt); font-weight:500; }
+
+.rsvp #rsvpBtn{ width:100%; }
+.rsvp__estado{
+  margin:12px 0 0; min-height:1.3em; text-align:center;
+  font-size:.92rem; font-style:italic; color:var(--gold-lt);
+}
+.rsvp__estado.is-error{ color:#ff8a9c; }
+
+/* Estado "ya confirmaste" */
+.rsvp__hecho{
+  margin:10px auto 0; padding:26px 22px; width:min(360px,88vw);
+  border:1px solid rgba(212,175,55,.4); border-radius:4px;
+  background:rgba(179,0,27,.12);
+}
+.rsvp__hecho .ornament__heart{ margin:0 auto 12px; width:20px; height:20px; }
+.rsvp__hechoTit{
+  margin:0 0 6px; font-family:var(--f-script);
+  font-size:2.1rem; line-height:1; color:var(--gold-lt);
+}
+.rsvp__hechoTxt{
+  margin:0 0 20px; font-family:var(--f-title);
+  font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; color:var(--cream);
+}
+
 /* ====================== CIERRE ====================== */
 .closing{
   position:relative; padding:80px 20px 64px; text-align:center;
@@ -670,7 +766,7 @@ img,svg{ display:block; max-width:100%; }
   .rose--tr{ width:116px; right:-46px; top:-30px; }
   .rose--br{ width:124px; right:-52px; }
   .bouquet--hero{ width:112px; left:-42px; }
-  .bouquet--rsvp{ width:104px; left:-40px; }
+  .bouquet--rsvp{ width:100px; left:-72px; }
   .rose--count{ width:92px; right:-36px; }
   .rose--rsvp{ width:100px; right:-40px; }
   .rose--gift{ width:84px; left:-32px; }

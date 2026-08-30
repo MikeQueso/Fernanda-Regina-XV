@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Confirmaciones · XV Fernanda Regina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&family=Cormorant+Garamond:wght@300;400;500&family=Italianno&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black:#080204; --wine:#1c0510; --red:#b3001b; --red-br:#d5142e;
+    --gold:#d4af37; --gold-lt:#f2dc9a; --cream:#f5ece0;
+    --f-title:'Cinzel',serif; --f-body:'Cormorant Garamond',Georgia,serif;
+    --f-script:'Italianno',cursive;
+  }
+  *,*::before,*::after{ box-sizing:border-box; }
+  [hidden]{ display:none !important; }
+  body{
+    margin:0; padding:28px 18px 60px;
+    background:radial-gradient(120% 70% at 50% 0%, #2a0710 0%, #0d0206 55%, #080204 100%);
+    background-attachment:fixed;
+    color:var(--cream); font-family:var(--f-body); font-size:17px; line-height:1.6;
+    min-height:100vh;
+  }
+  .caja{ width:min(760px,100%); margin-inline:auto; }
+
+  h1{
+    margin:0 0 4px; font-family:var(--f-script); font-weight:400;
+    font-size:clamp(2.6rem,9vw,3.6rem); line-height:1; text-align:center;
+    color:var(--cream); text-shadow:0 2px 24px rgba(213,20,46,.4);
+  }
+  .sub{
+    margin:0 0 30px; text-align:center; font-family:var(--f-title);
+    font-size:.56rem; letter-spacing:.34em; text-transform:uppercase;
+    color:var(--gold); opacity:.85;
+  }
+
+  /* ---- acceso ---- */
+  .acceso{
+    max-width:340px; margin:40px auto 0; padding:26px 22px;
+    border:1px solid rgba(212,175,55,.34); border-radius:5px;
+    background:rgba(255,255,255,.022);
+  }
+  .acceso p{ margin:0 0 16px; font-size:.96rem; color:rgba(245,236,224,.7); }
+  label{
+    display:block; margin-bottom:7px; font-family:var(--f-title);
+    font-size:.54rem; letter-spacing:.26em; text-transform:uppercase; color:var(--gold);
+  }
+  input[type=password]{
+    width:100%; padding:12px 14px; margin-bottom:16px;
+    font-family:var(--f-body); font-size:1.02rem; color:var(--cream);
+    background:rgba(10,3,6,.7); border:1px solid rgba(212,175,55,.38); border-radius:3px;
+  }
+  input[type=password]:focus{ outline:none; border-color:var(--gold); box-shadow:0 0 0 3px rgba(212,175,55,.14); }
+
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    padding:12px 26px; border-radius:2px; cursor:pointer;
+    border:1px solid var(--gold);
+    background:linear-gradient(180deg, rgba(179,0,27,.24), rgba(179,0,27,.08));
+    color:var(--gold-lt); text-decoration:none;
+    font-family:var(--f-title); font-size:.62rem;
+    letter-spacing:.22em; text-transform:uppercase;
+    transition:background .3s, color .3s;
+  }
+  .btn:hover{ background:var(--red); color:#fff; }
+  .btn:disabled{ opacity:.5; cursor:not-allowed; }
+  .btn--full{ width:100%; }
+  .btn--min{ padding:9px 18px; font-size:.55rem; }
+
+  .error{ margin:12px 0 0; font-size:.92rem; color:#ff8a9c; font-style:italic; }
+
+  /* ---- resumen ---- */
+  .resumen{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:24px; }
+  .tarjeta{
+    padding:18px 10px; text-align:center; border-radius:4px;
+    border:1px solid rgba(212,175,55,.26);
+    background:linear-gradient(180deg, rgba(179,0,27,.16), rgba(255,255,255,.015));
+  }
+  .tarjeta b{
+    display:block; font-family:var(--f-title); font-weight:500;
+    font-size:clamp(1.7rem,7vw,2.4rem); line-height:1; color:#fff;
+    text-shadow:0 0 20px rgba(213,20,46,.5);
+  }
+  .tarjeta i{
+    display:block; margin-top:7px; font-style:normal; font-family:var(--f-title);
+    font-size:.5rem; letter-spacing:.2em; text-transform:uppercase; color:var(--gold);
+  }
+
+  .barra{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:20px; }
+
+  /* ---- tabla ---- */
+  .tablaEnv{ overflow-x:auto; border:1px solid rgba(212,175,55,.24); border-radius:4px; }
+  table{ width:100%; border-collapse:collapse; min-width:420px; }
+  thead th{
+    padding:12px 14px; text-align:left; white-space:nowrap;
+    font-family:var(--f-title); font-size:.52rem;
+    letter-spacing:.2em; text-transform:uppercase; color:var(--gold);
+    background:rgba(179,0,27,.18);
+    border-bottom:1px solid rgba(212,175,55,.28);
+  }
+  tbody td{
+    padding:13px 14px; border-bottom:1px solid rgba(255,255,255,.05);
+    font-size:1rem;
+  }
+  tbody tr:last-child td{ border-bottom:none; }
+  tbody tr:nth-child(even){ background:rgba(255,255,255,.016); }
+  .apellido{ font-family:var(--f-title); font-size:.82rem; letter-spacing:.06em; }
+  .boletos{ text-align:center; font-variant-numeric:tabular-nums; color:var(--gold-lt); font-size:1.1rem; }
+  .fecha{ white-space:nowrap; font-size:.88rem; color:rgba(245,236,224,.5); }
+
+  .vacio{ padding:40px 20px; text-align:center; font-style:italic; color:rgba(245,236,224,.45); }
+</style>
+</head>
+<body>
+
+<div class="caja">
+  <h1>Confirmaciones</h1>
+  <p class="sub">XV Fernanda Regina · 21.11.2026</p>
+
+  <!-- ===== acceso ===== -->
+  <div class="acceso" id="acceso">
+    <p>Esta página es privada. Escribe la clave para ver la lista.</p>
+    <form id="formClave">
+      <label for="clave">Clave</label>
+      <input type="password" id="clave" autocomplete="current-password" required>
+      <button class="btn btn--full" type="submit" id="btnEntrar">Entrar</button>
+    </form>
+    <p class="error" id="errorClave" hidden></p>
+  </div>
+
+  <!-- ===== panel ===== -->
+  <div id="panel" hidden>
+    <div class="resumen">
+      <div class="tarjeta"><b id="nFamilias">0</b><i>Familias</i></div>
+      <div class="tarjeta"><b id="nBoletos">0</b><i>Boletos</i></div>
+      <div class="tarjeta"><b id="nProm">0</b><i>Promedio</i></div>
+    </div>
+
+    <div class="barra">
+      <button class="btn btn--min" type="button" id="btnRecargar">Actualizar</button>
+      <button class="btn btn--min" type="button" id="btnCsv">Descargar CSV</button>
+      <button class="btn btn--min" type="button" id="btnSalir">Salir</button>
+    </div>
+
+    <div class="tablaEnv">
+      <table>
+        <thead>
+          <tr><th>Familia</th><th style="text-align:center">Boletos</th><th>Confirmó</th></tr>
+        </thead>
+        <tbody id="filas"></tbody>
+      </table>
+      <p class="vacio" id="vacio" hidden>Todavía no hay confirmaciones.</p>
+    </div>
+  </div>
+</div>
+
+<script src="js/supabase-config.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var CFG   = window.SUPABASE || {};
+  var LLAVE = 'regina-xv-clave';
+
+  var acceso   = document.getElementById('acceso');
+  var panel    = document.getElementById('panel');
+  var formCl   = document.getElementById('formClave');
+  var inputCl  = document.getElementById('clave');
+  var btnEnt   = document.getElementById('btnEntrar');
+  var errorCl  = document.getElementById('errorClave');
+  var filas    = document.getElementById('filas');
+  var vacio    = document.getElementById('vacio');
+
+  var datos = [];
+
+  function pedir(clave) {
+    return fetch(CFG.url.replace(/\/+$/, '') + '/rest/v1/rpc/ver_confirmaciones', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: CFG.anonKey,
+        Authorization: 'Bearer ' + CFG.anonKey
+      },
+      body: JSON.stringify({ clave: clave })
+    }).then(function (r) {
+      if (r.status === 401 || r.status === 403 || r.status === 400) throw new Error('clave');
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    });
+  }
+
+  function fecha(iso) {
+    var d = new Date(iso);
+    if (isNaN(d)) return '—';
+    return d.toLocaleDateString('es-MX', { day: '2-digit', month: 'short' }) +
+           ' · ' + d.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  function pintar(lista) {
+    datos = lista || [];
+    filas.innerHTML = '';
+
+    var total = 0;
+    datos.forEach(function (f) {
+      total += f.boletos;
+      var tr = document.createElement('tr');
+
+      var td1 = document.createElement('td');
+      td1.className = 'apellido';
+      td1.textContent = f.apellido;
+
+      var td2 = document.createElement('td');
+      td2.className = 'boletos';
+      td2.textContent = f.boletos;
+
+      var td3 = document.createElement('td');
+      td3.className = 'fecha';
+      td3.textContent = fecha(f.creado_en);
+
+      tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3);
+      filas.appendChild(tr);
+    });
+
+    document.getElementById('nFamilias').textContent = datos.length;
+    document.getElementById('nBoletos').textContent = total;
+    document.getElementById('nProm').textContent =
+      datos.length ? (total / datos.length).toFixed(1) : '0';
+
+    vacio.hidden = datos.length > 0;
+  }
+
+  function entrar(clave, desdeForm) {
+    btnEnt.disabled = true;
+    errorCl.hidden = true;
+
+    pedir(clave).then(function (lista) {
+      try { sessionStorage.setItem(LLAVE, clave); } catch (e) {}
+      acceso.hidden = true;
+      panel.hidden = false;
+      pintar(lista);
+    })["catch"](function (err) {
+      btnEnt.disabled = false;
+      if (!desdeForm) { try { sessionStorage.removeItem(LLAVE); } catch (e) {} return; }
+      errorCl.textContent = err.message === 'clave'
+        ? 'Clave incorrecta.'
+        : 'No se pudo conectar. Revisa tu internet.';
+      errorCl.hidden = false;
+      inputCl.select();
+    });
+  }
+
+  formCl.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (inputCl.value) entrar(inputCl.value, true);
+  });
+
+  document.getElementById('btnRecargar').addEventListener('click', function () {
+    var c = sessionStorage.getItem(LLAVE);
+    if (c) pedir(c).then(pintar)["catch"](function () {});
+  });
+
+  document.getElementById('btnSalir').addEventListener('click', function () {
+    try { sessionStorage.removeItem(LLAVE); } catch (e) {}
+    location.reload();
+  });
+
+  document.getElementById('btnCsv').addEventListener('click', function () {
+    var lineas = ['Familia,Boletos,Confirmo'];
+    datos.forEach(function (f) {
+      lineas.push('"' + String(f.apellido).replace(/"/g, '""') + '",' + f.boletos + ',"' + fecha(f.creado_en) + '"');
+    });
+    var blob = new Blob(['﻿' + lineas.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'confirmaciones-xv-regina.csv';
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+  });
+
+  // Si ya se validó en esta pestaña, entra directo.
+  try {
+    var guardada = sessionStorage.getItem(LLAVE);
+    if (guardada) entrar(guardada, false);
+  } catch (e) {}
+})();
+</script>
+</body>
+</html>
