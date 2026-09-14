@@ -12,3 +12,6 @@ node_modules/
 
 # Configuración local de Claude Code
 .claude/
+
+# Lista de invitados con nombres y códigos: nunca al repositorio público
+privado/

@@ -1,255 +1,260 @@
 /* ==========================================================
    Confirmación de asistencia
 
-   El invitado escribe su apellido y el código de su invitación.
-   Solo si los dos coinciden con una familia de js/familias.js
-   se le muestran los boletos que tiene asignados. El código es
-   lo que distingue a dos familias con el mismo apellido, y de
-   paso impide ver los boletos ajenos.
+   El invitado escribe el nombre de su invitación y su código.
+   La lista vive en Supabase (tabla invitaciones), no en este
+   repositorio público: la base solo responde cuando nombre y
+   código coinciden, así que desde la página no se puede sacar
+   la lista de invitados.
 
-   Guarda en Supabase y ofrece el aviso por WhatsApp. Una vez
-   enviado no se puede cambiar: el rol anon solo tiene INSERT.
+   Al confirmar se muestra el agradecimiento, se descarga el PDF
+   con los boletos y se ofrece el aviso por WhatsApp.
    ========================================================== */
 (function () {
   'use strict';
 
-  var CFG      = window.SUPABASE || {};
-  var FAMILIAS = window.FAMILIAS || [];
-  var WHATSAPP = window.WHATSAPP || '525611419206';
-  var LLAVE    = 'regina-xv-confirmado';
-  var MAX_SUG  = 6;
+  var CFG         = window.SUPABASE || {};
+  var WHATSAPP    = window.WHATSAPP || '525611419206';
+  var LLAVE       = 'regina-xv-invitacion';
+  var LLAVE_VIEJA = 'regina-xv-confirmado';   // formato anterior, ya no sirve
 
-  var form    = document.getElementById('rsvpForm');
-  var apel    = document.getElementById('rsvpApellido');
-  var cod     = document.getElementById('rsvpCodigo');
-  var lista   = document.getElementById('rsvpLista');
-  var hallada = document.getElementById('rsvpHallada');
-  var hFam    = document.getElementById('rsvpHFam');
-  var hNum    = document.getElementById('rsvpHNum');
-  var hTxt    = document.getElementById('rsvpHTxt');
-  var btn     = document.getElementById('rsvpBtn');
-  var estado  = document.getElementById('rsvpEstado');
-  var hecho   = document.getElementById('rsvpHecho');
-  var gFam    = document.getElementById('rsvpGraciasFam');
-  var hechoTx = document.getElementById('rsvpHechoTxt');
-  var wa      = document.getElementById('rsvpWa');
+  function $(id) { return document.getElementById(id); }
+
+  var form      = $('rsvpForm');
+  var inNombre  = $('rsvpNombre');
+  var inCodigo  = $('rsvpCodigo');
+  var hallada   = $('rsvpHallada');
+  var hNombre   = $('rsvpHNombre');
+  var hNum      = $('rsvpHNum');
+  var hTxt      = $('rsvpHTxt');
+  var hNota     = $('rsvpHNota');
+  var btn       = $('rsvpBtn');
+  var btnTxt    = $('rsvpBtnTxt');
+  var estado    = $('rsvpEstado');
+  var espera    = $('rsvpEspera');
+  var hecho     = $('rsvpHecho');
+  var gNombre   = $('rsvpGraciasNombre');
+  var hechoTx   = $('rsvpHechoTxt');
+  var btnPdf    = $('rsvpPdf');
+  var pdfEstado = $('rsvpPdfEstado');
+  var wa        = $('rsvpWa');
+  var otra      = $('rsvpOtra');
 
   if (!form) return;
 
-  var elegida = null;   // la familia validada (apellido + código)
+  var encontrada = null;   // invitación que coincide con lo escrito
+  var datosHecho = null;   // invitación ya confirmada que se está mostrando
+  var temporizador = null;
+  var turno = 0;           // descarta respuestas que llegan tarde
 
-  /* ---- utilidades ---- */
-  function normalizar(s) {
-    return String(s).toLowerCase()
-      .normalize('NFD').replace(/[̀-ͯ]/g, '')   // quita acentos
-      .replace(/\s+/g, ' ').trim();
-  }
-
-  function limpiarCodigo(s) { return String(s).replace(/\s+/g, '').trim(); }
-  function plural(n) { return n === 1 ? 'boleto' : 'boletos'; }
-
+  /* ---------------- utilidades ---------------- */
   function decir(msg, error) {
     estado.textContent = msg || '';
     estado.classList.toggle('is-error', !!error);
   }
+  function plural(n) { return n === 1 ? 'boleto' : 'boletos'; }
+  function digitos(s) { return String(s || '').replace(/\D+/g, ''); }
+  function largoNombre(s) { return String(s || '').replace(/\s+/g, '').length; }
 
-  function enlaceWa(f) {
-    var texto = 'Aceptamos, gracias por invitarnos\n\n' +
-                'Familia: ' + f.apellido + '\n' +
-                'Código: ' + f.codigo + '\n' +
-                'Boletos: ' + f.boletos;
-    return 'https://wa.me/' + WHATSAPP + '?text=' + encodeURIComponent(texto);
-  }
-
-  /* ---- pantalla final ---- */
-  function mostrarHecho(f) {
-    form.hidden = true;
-    hecho.hidden = false;
-    gFam.textContent = f.apellido;
-    hechoTx.textContent = f.boletos + ' ' + plural(f.boletos) + ' apartados';
-    wa.href = enlaceWa(f);
-  }
-
-  /* ---- si ya confirmó en este dispositivo ---- */
-  try {
-    var previo = JSON.parse(localStorage.getItem(LLAVE) || 'null');
-    if (previo && previo.apellido) { mostrarHecho(previo); return; }
-  } catch (e) { /* almacenamiento bloqueado: sigue normal */ }
-
-  /* ---- sin lista de invitados todavía ----
-     Sin familias cargadas el formulario rechazaría a todo el mundo,
-     así que en su lugar se muestra un aviso de que falta poco. */
-  if (!FAMILIAS.length) {
-    form.hidden = true;
-    var espera = document.getElementById('rsvpEspera');
-    if (espera) espera.hidden = false;
-    return;
-  }
-
-  /* ---- sugerencias de apellido ----
-     Se muestran apellidos sin repetir: si hay dos familias con el
-     mismo, en la lista aparece una sola vez y el código decide cuál.
-     Tampoco se enseñan los boletos aquí, para no exponerlos. */
-  function apellidosSugeridos(texto) {
-    var q = normalizar(texto);
-    if (q.length < 2) return [];
-
-    var vistos = {}, empiezan = [], contienen = [];
-    FAMILIAS.forEach(function (f) {
-      var n = normalizar(f.apellido);
-      if (vistos[n]) return;
-      if (n.indexOf(q) === 0)      { vistos[n] = 1; empiezan.push(f.apellido); }
-      else if (n.indexOf(q) > -1)  { vistos[n] = 1; contienen.push(f.apellido); }
-    });
-    return empiezan.concat(contienen).slice(0, MAX_SUG);
-  }
-
-  function cerrarLista() {
-    lista.hidden = true;
-    lista.innerHTML = '';
-    apel.setAttribute('aria-expanded', 'false');
-  }
-
-  function pintarSugerencias(res) {
-    lista.innerHTML = '';
-    if (!res.length) { cerrarLista(); return; }
-
-    res.forEach(function (nombre) {
-      var li = document.createElement('li');
-      li.className = 'rsvp__op';
-      li.setAttribute('role', 'option');
-      li.tabIndex = -1;
-      li.textContent = nombre;
-      li.addEventListener('mousedown', function (e) {
-        e.preventDefault();
-        apel.value = nombre;
-        cerrarLista();
-        validar();
-        if (!cod.value) cod.focus();
-      });
-      lista.appendChild(li);
-    });
-
-    lista.hidden = false;
-    apel.setAttribute('aria-expanded', 'true');
-  }
-
-  /* ---- validación de apellido + código ---- */
-  function validar() {
-    elegida = null;
-    hallada.hidden = true;
-    btn.disabled = true;
-
-    var a = normalizar(apel.value);
-    var c = limpiarCodigo(cod.value);
-
-    if (a.length < 2) { decir(''); return; }
-
-    var mismoApellido = FAMILIAS.filter(function (f) {
-      return normalizar(f.apellido) === a;
-    });
-
-    if (!mismoApellido.length) {
-      // Puede que aún esté escribiendo: solo se avisa si no hay ni sugerencias.
-      if (!apellidosSugeridos(apel.value).length) {
-        decir('No encontramos ese apellido en la lista.', true);
-      } else {
-        decir('');
-      }
-      return;
-    }
-
-    if (!c) { decir(''); return; }
-
-    var f = mismoApellido.filter(function (x) {
-      return limpiarCodigo(x.codigo) === c;
-    })[0];
-
-    if (!f) {
-      decir('El código no corresponde a esa familia.', true);
-      return;
-    }
-
-    elegida = f;
-    hFam.textContent = 'Familia ' + f.apellido;
-    hNum.textContent = f.boletos;
-    hTxt.textContent = plural(f.boletos);
-    hallada.hidden = false;
-    btn.disabled = false;
-    decir('');
-  }
-
-  apel.addEventListener('input', function () {
-    pintarSugerencias(apellidosSugeridos(apel.value));
-    validar();
-  });
-
-  cod.addEventListener('input', validar);
-
-  apel.addEventListener('blur', function () { setTimeout(cerrarLista, 120); });
-
-  apel.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') cerrarLista();
-    else if (e.key === 'Enter' && !lista.hidden) {
-      var primera = lista.querySelector('.rsvp__op');
-      if (primera) { e.preventDefault(); primera.dispatchEvent(new Event('mousedown')); }
-    }
-  });
-
-  /* ---- guardar en Supabase ----
-     La columna 'codigo' se agrega con sql/agregar-codigo.sql. Si todavía
-     no está, el primer intento falla con PGRST204 y se reintenta sin ella,
-     para que las confirmaciones no se pierdan mientras tanto. */
-  function guardar(f, conCodigo) {
-    var fila = { apellido: f.apellido, boletos: f.boletos };
-    if (conCodigo) fila.codigo = f.codigo;
-
-    return fetch(CFG.url.replace(/\/+$/, '') + '/rest/v1/confirmaciones', {
+  function rpc(fn, cuerpo) {
+    return fetch(CFG.url.replace(/\/+$/, '') + '/rest/v1/rpc/' + fn, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         apikey: CFG.anonKey,
-        Authorization: 'Bearer ' + CFG.anonKey,
-        Prefer: 'return=minimal'
+        Authorization: 'Bearer ' + CFG.anonKey
       },
-      body: JSON.stringify(fila)
+      body: JSON.stringify(cuerpo || {})
     }).then(function (r) {
-      if (r.ok) return true;
-      return r.text().then(function (t) {
-        if (conCodigo && /PGRST204|codigo/i.test(t)) {
-          if (window.console) console.warn('Falta la columna "codigo"; se guarda sin ella.');
-          return guardar(f, false);
-        }
-        throw new Error('HTTP ' + r.status + ' · ' + t.slice(0, 160));
-      });
+      if (!r.ok) throw new Error(fn + ' HTTP ' + r.status);
+      return r.json();
     });
   }
 
-  /* ---- envío ---- */
+  function enlaceWa(d) {
+    var texto = 'Aceptamos, gracias por invitarnos\n\n' +
+                'Invitación: ' + d.mostrar + '\n' +
+                'Código: ' + d.codigo + '\n' +
+                'Boletos: ' + d.boletos;
+    return 'https://wa.me/' + WHATSAPP + '?text=' + encodeURIComponent(texto);
+  }
+
+  function guardarLocal(d) {
+    try { localStorage.setItem(LLAVE, JSON.stringify(d)); } catch (e) {}
+  }
+  function leerLocal() {
+    try {
+      localStorage.removeItem(LLAVE_VIEJA);
+      var d = JSON.parse(localStorage.getItem(LLAVE) || 'null');
+      return d && d.codigo && d.mostrar && d.boletos ? d : null;
+    } catch (e) { return null; }
+  }
+
+  /* ---------------- PDF de boletos ---------------- */
+  function descargarPdf() {
+    if (!datosHecho) return;
+    if (!window.BoletosPDF) {
+      pdfEstado.classList.add('is-error');
+      pdfEstado.textContent = 'No se pudo preparar el PDF. Recarga la página e intenta de nuevo.';
+      return;
+    }
+    btnPdf.disabled = true;
+    pdfEstado.classList.remove('is-error');
+    pdfEstado.textContent = 'Preparando tus boletos…';
+
+    window.BoletosPDF.generar(datosHecho).then(function () {
+      pdfEstado.textContent = '¡Listo! Tus boletos se descargaron en PDF.';
+    }, function (err) {
+      pdfEstado.classList.add('is-error');
+      pdfEstado.textContent = 'No se pudo generar el PDF. Toca el botón para intentarlo de nuevo.';
+      if (window.console) console.error('PDF:', err);
+    }).then(function () {
+      btnPdf.disabled = false;
+    });
+  }
+
+  btnPdf.addEventListener('click', descargarPdf);
+
+  /* ---------------- pantallas ---------------- */
+  function mostrarHecho(d, recienConfirmada) {
+    datosHecho = d;
+    form.hidden = true;
+    espera.hidden = true;
+    hecho.hidden = false;
+
+    gNombre.textContent = d.mostrar;
+    hechoTx.textContent = d.boletos + ' ' + plural(d.boletos) + ' apartados · código ' + d.codigo;
+    wa.href = enlaceWa(d);
+
+    if (recienConfirmada) {
+      hecho.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // Primero se lee el agradecimiento; después baja el PDF.
+      setTimeout(descargarPdf, 900);
+    }
+  }
+
+  function mostrarEspera() {
+    form.hidden = true;
+    espera.hidden = false;
+  }
+
+  function limpiarHallada() {
+    encontrada = null;
+    hallada.hidden = true;
+    btn.disabled = true;
+  }
+
+  function abrirFormulario() {
+    hecho.hidden = true;
+    pdfEstado.textContent = '';
+    inNombre.value = '';
+    inCodigo.value = '';
+    limpiarHallada();
+    decir('');
+
+    if (!CFG.url || !CFG.anonKey) { mostrarEspera(); return; }
+
+    rpc('hay_invitaciones').then(function (hay) {
+      if (hay === true) {
+        espera.hidden = true;
+        form.hidden = false;
+      } else {
+        mostrarEspera();
+      }
+    })['catch'](mostrarEspera);
+  }
+
+  // Un mismo celular puede confirmar varias invitaciones (por ejemplo,
+  // alguien que confirma por sus papás y por su propia familia).
+  otra.addEventListener('click', function () {
+    try { localStorage.removeItem(LLAVE); } catch (e) {}
+    datosHecho = null;
+    abrirFormulario();
+    inNombre.focus();
+  });
+
+  /* ---------------- búsqueda ---------------- */
+  function programar() {
+    clearTimeout(temporizador);
+    turno++;
+    limpiarHallada();
+
+    if (largoNombre(inNombre.value) < 2 || digitos(inCodigo.value).length < 4) {
+      decir('');
+      return;
+    }
+    decir('Buscando tu invitación…');
+    temporizador = setTimeout(buscar, 450);
+  }
+
+  function buscar() {
+    var mio = ++turno;
+
+    rpc('buscar_invitacion', { p_nombre: inNombre.value, p_codigo: inCodigo.value })
+      .then(function (filas) {
+        if (mio !== turno) return;
+
+        var f = filas && filas[0];
+        if (!f) {
+          decir('No encontramos una invitación con ese nombre y código. Revisa el mensaje que te enviamos.', true);
+          return;
+        }
+
+        encontrada = f;
+        hNombre.textContent = f.mostrar;
+        hNum.textContent = f.boletos;
+        hTxt.textContent = plural(f.boletos);
+        hNota.textContent = f.confirmada ? 'Esta invitación ya está confirmada' : 'Boletos apartados para ti';
+        btnTxt.textContent = f.confirmada ? 'Ver mis boletos' : 'Confirmar asistencia';
+        hallada.hidden = false;
+        btn.disabled = false;
+        decir('');
+
+        if (window.BoletosPDF) window.BoletosPDF.precargar();
+      })['catch'](function (err) {
+        if (mio !== turno) return;
+        decir('No pudimos conectar. Revisa tu internet e intenta de nuevo.', true);
+        if (window.console) console.error('RSVP:', err);
+      });
+  }
+
+  inNombre.addEventListener('input', programar);
+  inCodigo.addEventListener('input', function () {
+    var limpio = digitos(inCodigo.value).slice(0, 6);
+    if (limpio !== inCodigo.value) inCodigo.value = limpio;
+    programar();
+  });
+
+  /* ---------------- confirmar ---------------- */
   form.addEventListener('submit', function (ev) {
     ev.preventDefault();
 
-    if (!elegida) {
-      decir('Escribe tu apellido y el código de tu invitación.', true);
-      (normalizar(apel.value).length < 2 ? apel : cod).focus();
+    if (!encontrada) {
+      decir('Escribe el nombre de tu invitación y tu código.', true);
       return;
     }
 
-    if (!CFG.url || !CFG.anonKey) { mostrarHecho(elegida); return; }
-
     btn.disabled = true;
-    decir('Enviando…');
+    decir(encontrada.confirmada ? 'Abriendo tus boletos…' : 'Confirmando…');
 
-    guardar(elegida, true).then(function () {
-      try { localStorage.setItem(LLAVE, JSON.stringify(elegida)); } catch (e) {}
+    rpc('confirmar_invitacion', { p_nombre: inNombre.value, p_codigo: inCodigo.value })
+      .then(function (filas) {
+        var f = filas && filas[0];
+        if (!f) throw new Error('La invitación ya no coincide');
 
-      decir('');
-      // WhatsApp no se abre solo: taparía el mensaje antes de leerlo.
-      mostrarHecho(elegida);
-    })["catch"](function (err) {
-      btn.disabled = false;
-      decir('No se pudo guardar. Revisa tu conexión e intenta de nuevo.', true);
-      if (window.console) console.error('RSVP:', err.message);
-    });
+        var d = { nombre: f.nombre, mostrar: f.mostrar, codigo: f.codigo, boletos: f.boletos };
+        guardarLocal(d);
+        decir('');
+        mostrarHecho(d, true);
+      })['catch'](function (err) {
+        btn.disabled = false;
+        decir('No se pudo confirmar. Revisa tu conexión e intenta de nuevo.', true);
+        if (window.console) console.error('RSVP:', err);
+      });
   });
+
+  /* ---------------- arranque ---------------- */
+  var previo = leerLocal();
+  if (previo) mostrarHecho(previo, false);
+  else abrirFormulario();
 })();

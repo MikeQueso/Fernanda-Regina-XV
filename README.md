@@ -3,23 +3,28 @@
 Invitación digital de una sola página. Tema: **La Reina de Corazones**
 (Alicia en el País de las Maravillas).
 
-**Evento:** sábado 21 de noviembre de 2026 · Misa 7:30 PM
+**Evento:** sábado 21 de noviembre de 2026 · Misa 7:30 PM · Recepción 8:00 PM
+
+- Invitación: <https://mikequeso.github.io/Fernanda-Regina-XV/>
+- Panel de confirmaciones: <https://mikequeso.github.io/Fernanda-Regina-XV/confirmaciones.html>
 
 ---
 
 ## Estructura
 
 ```
-index.html                  La invitación
-confirmaciones.html         Panel privado con quién confirmó (pide clave)
-css/styles.css              Estilos
-js/main.js                  Contador, calendario, música, animaciones
-js/album.js                 Álbum de fotos (Supabase Storage)
-js/rsvp.js                  Confirmación de asistencia
-js/supabase-config.js       ← AQUÍ van la URL y la clave publicable
-sql/confirmaciones.sql      Script a ejecutar una vez en Supabase
-assets/audio/cancion.mp3    Música de fondo
-assets/img/                 Rosas, gato, soldado, cartas
+index.html                      La invitación
+confirmaciones.html             Panel privado: quién confirmó y quién falta (pide clave)
+css/styles.css                  Estilos
+js/main.js                      Contador, calendario, música, animaciones
+js/album.js                     Álbum de fotos (Supabase Storage)
+js/rsvp.js                      Confirmación con nombre + código
+js/boletos-pdf.js               PDF de boletos que se descarga al confirmar
+js/supabase-config.js           URL y clave publicable de Supabase
+assets/vendor/jspdf.umd.min.js  jsPDF 2.5.1 (licencia MIT); se carga solo al generar el PDF
+assets/audio, assets/img        Música e imágenes
+sql/                            Scripts de la base, sin datos personales
+privado/                        ⚠️ No está en el repositorio: lista de invitados y códigos
 ```
 
 Es HTML/CSS/JS plano: **no necesita compilarse ni instalar nada**.
@@ -30,142 +35,78 @@ Es HTML/CSS/JS plano: **no necesita compilarse ni instalar nada**.
 python -m http.server 5173
 ```
 
-Y abrir <http://localhost:5173>.
-
-> Ábrela con un servidor, no con doble clic al `index.html`.
-> Con `file://` el navegador bloquea el audio y las fuentes.
+Y abrir <http://localhost:5173>. Con doble clic al `index.html` (`file://`) el
+navegador bloquea el audio, las fuentes y la base de datos.
 
 ---
 
-## Qué falta por llenar
+## Cómo funciona la confirmación
 
-| Sección | Estado |
+1. Cada invitación tiene un **código único** de 4 dígitos.
+2. El invitado escribe **nombre + código**. La base solo responde si coinciden; tolera
+   acentos y mayúsculas, y basta una palabra del nombre ("maria" encuentra "Tía María").
+3. Ve sus boletos, confirma, se descarga un **PDF** (un pase con el agradecimiento y un
+   boleto por persona) y avisa por WhatsApp.
+4. Cada invitación se confirma **una sola vez**. Si otro integrante entra con el mismo
+   código, solo vuelve a bajar los boletos.
+
+La lista vive en Supabase (tabla `invitaciones`), **no en este repositorio**, porque el
+repositorio es público. Desde la página no hay forma de leerla completa: las funciones
+solo devuelven la invitación cuyo nombre y código coinciden.
+
+### Archivos privados
+
+`privado/` está en `.gitignore`.
+
+| Archivo | Para qué |
 |---|---|
-| Fotos de Fernanda Regina | pendiente |
-| Hora de la recepción | pendiente |
-| Itinerario | pendiente |
-| Datos de regalos | pendiente |
-| Imagen de la Reina (vestimenta) | falta `assets/img/reina.jpg` |
-| Álbum de fotos | listo |
-| Confirmaciones | falta correr `sql/confirmaciones.sql` |
+| `privado/invitados.json` | Fuente de verdad de los códigos. **No regenerarlos**: los ya repartidos dejarían de servir. |
+| `privado/cargar-invitados.sql` | Esquema + la lista. Se corre en el SQL Editor; se puede repetir sin duplicar. |
 
-Las secciones pendientes ya están maquetadas y muestran un aviso de
-"Próximamente". Para activarlas solo se llena el contenido y se borra su
-bloque `<div class="soon">`.
+Fuera del proyecto: `Descargas/CODIGOS INVITACION XV REGINA.xlsx`, con el código y el
+mensaje de cada invitación.
 
----
+## Panel de confirmaciones
 
-## Configurar el álbum de fotos (Supabase)
+- Invitaciones y boletos confirmados, porcentaje, y cuántos faltan.
+- Filtros *Todas / Confirmadas / Pendientes* y búsqueda por nombre o código.
+- Botón de WhatsApp en cada fila con el mensaje del código listo para mandar.
+- La ✕ quita una confirmación; *Borrar confirmaciones* las quita todas. La lista de
+  invitados nunca se borra desde aquí.
+- Se actualiza solo cada minuto.
 
-1. Crear un proyecto en <https://supabase.com> (plan gratis).
-2. **Storage → New bucket** → nombre `album`, marcado como **Public bucket**.
-   Hace falta que sea público para que la galería pueda mostrar las fotos
-   en la página (un `<img>` no puede mandar cabeceras de autenticación).
-3. **SQL Editor → New query** → pegar y ejecutar:
+La clave vive en la función `clave_panel()`; para cambiarla, `sql/cambiar-clave.sql`.
 
-   ```sql
-   create policy "Invitados pueden subir fotos"
-   on storage.objects for insert
-   to anon
-   with check (bucket_id = 'album');
+## Scripts SQL
 
-   create policy "Invitados pueden ver el album"
-   on storage.objects for select
-   to anon
-   using (bucket_id = 'album');
-   ```
-
-   Son las dos únicas operaciones permitidas: **subir y ver**. No se
-   concede `update` ni `delete`, así que nadie puede borrar ni reemplazar
-   una foto desde la página. Para eso hay que entrar al dashboard.
-
-4. Copiar de **Settings → Data API** el *Project URL*, y de
-   **Settings → API Keys** la clave *anon / public*.
-5. Pegarlas en `js/supabase-config.js`:
-
-   ```js
-   window.SUPABASE = {
-     url: 'https://TU-PROYECTO.supabase.co',
-     anonKey: 'eyJ...',
-     bucket: 'album'
-   };
-   ```
-
-En cuanto `url` tenga valor, el botón "Subir fotos" se activa solo.
-
-> La clave `anon` es pública por diseño: vive en el navegador y solo puede
-> hacer lo que las políticas permitan, que aquí es insertar y leer.
-> La que **nunca** se publica ni se pega en este archivo es la `service_role`.
-
-Las fotos quedan en el dashboard de Supabase, en **Storage → album**.
-
-### Cómo guarda las fotos
-
-Cada imagen se sube en dos tamaños, redimensionada **en el navegador del
-invitado** antes de salir:
-
-| Carpeta | Lado mayor | Para qué |
-|---|---|---|
-| `fotos/` | 2048 px · JPEG q86 | lo que se ve al abrir la foto |
-| `thumbs/` | 480 px · JPEG q72 | la cuadrícula de la galería |
-
-Así una foto de 5 MB del celular viaja como ~400 KB. Sube más rápido con
-datos móviles, la galería no tarda en cargar y el plan gratis (1 GB) rinde
-para miles de fotos en vez de doscientas.
-
-Los videos se suben tal cual, sin recomprimir, y salen en la galería con un
-ícono de reproducir.
+| Archivo | Qué hace |
+|---|---|
+| `sql/confirmaciones.sql` | Instalación inicial de la tabla de confirmaciones |
+| `sql/agregar-codigo.sql` | Columna `codigo` en confirmaciones |
+| `sql/paso-final.sql` | Arreglo del borrado masivo |
+| `sql/cambiar-clave.sql` | Cambiar la clave del panel |
+| `sql/invitaciones.sql` | Esquema de la lista, **sin datos** (la versión con datos está en `privado/`) |
 
 ---
 
----
+## Álbum de fotos
 
-## Confirmaciones de asistencia
-
-1. Abrir `sql/confirmaciones.sql`, **cambiar `CAMBIA-ESTA-CLAVE`** por la
-   contraseña con la que quieras entrar al panel.
-2. Pegar todo en **SQL Editor → New query** y darle **Run**.
-
-Los invitados confirman desde la invitación: apellido de la familia y
-número de boletos. Solo tienen permiso de `insert`, así que **una vez
-enviada la cantidad no se puede cambiar ni borrar** — lo impide la base de
-datos, no el navegador.
-
-La lista se ve en `confirmaciones.html`, que pide la clave. Esa página no
-está enlazada desde la invitación.
-
-> La lista **no** es legible con la clave publicable: se lee a través de una
-> función `security definer` que exige la contraseña. Sin ella, ni siquiera
-> conociendo la URL se puede sacar quién viene.
-
----
+Bucket público `album` con políticas `insert` y `select` para `anon`, sin `update` ni
+`delete`: los invitados suben y ven, pero no borran. Las fotos se redimensionan en el
+navegador antes de subir (`fotos/` a 2048 px y `thumbs/` a 480 px). Tope de 50 MB por
+archivo, que en la práctica solo alcanzan los videos.
 
 ## Que Supabase no se pause
 
-Los proyectos gratuitos se pausan tras ~7 días sin actividad, y al pausarse
-la invitación deja de guardar fotos y confirmaciones.
+Los proyectos gratuitos se pausan tras ~7 días sin actividad, y al pausarse la
+invitación deja de guardar fotos y confirmaciones.
 
-`.github/workflows/mantener-supabase-activo.yml` le manda una petición cada
-3 días desde GitHub Actions para evitarlo. Si el proyecto no responde, la
-ejecución falla y GitHub avisa por correo.
+`.github/workflows/mantener-supabase-activo.yml` le manda una petición cada 3 días desde
+GitHub Actions. Si el proyecto no responde, la ejecución falla y GitHub avisa por correo.
 
-> GitHub desactiva los workflows programados si el repositorio pasa 60 días
-> sin commits. Si se acerca la fecha y no has tocado nada, entra a la pestaña
-> **Actions** y ejecútalo a mano una vez para reactivarlo.
-
----
+> GitHub desactiva los workflows programados si el repositorio pasa 60 días sin commits.
+> Si se acerca la fecha y no has tocado nada, entra a **Actions** y ejecútalo a mano.
 
 ## Publicar
 
-### Netlify (recomendado — funciona con repo privado)
-
-1. <https://app.netlify.com> → *Add new site* → *Import an existing project*.
-2. Conectar GitHub y elegir este repositorio.
-3. Build command: **vacío**. Publish directory: **`.`**
-4. *Deploy*.
-
-### GitHub Pages
-
-Requiere que el repositorio sea **público** en el plan gratuito.
-
-*Settings → Pages → Source: Deploy from a branch → `main` / `root`.*
+GitHub Pages desde `main` / raíz. Cada push actualiza el sitio en alrededor de un minuto.

@@ -263,9 +263,7 @@ img,svg{ display:block; max-width:100%; }
 .rose--tr{ width:150px; top:-40px;  right:-62px; --r:18deg;  transform:rotate(18deg);  animation:sway 11s ease-in-out infinite reverse; }
 .rose--br{ width:165px; bottom:5%;  right:-72px; --r:-22deg; transform:rotate(-22deg); animation:sway 12s ease-in-out infinite; }
 .rose--c1{ width:74px;  top:26%;    left:5%;  opacity:.55; --r:28deg; transform:rotate(28deg); animation:sway 8s ease-in-out infinite reverse; }
-.rose--count{ width:118px; top:22px;   right:-46px; --r:16deg;  transform:rotate(16deg);  animation:sway 13s ease-in-out infinite; }
-.rose--gift { width:104px; bottom:26px; left:-42px; --r:-18deg; transform:rotate(-18deg); animation:sway 11s ease-in-out infinite reverse; }
-.rose--rsvp { width:126px; top:26px;   right:-52px; --r:-16deg; transform:rotate(-16deg); animation:sway 12s ease-in-out infinite reverse; }
+.rose--count{ width:118px; top:22px;   right:-46px; --r:16deg;  transform:rotate(16deg);  animation:sway 13s ease-in-out infinite; }.rose--rsvp { width:126px; top:26px;   right:-52px; --r:-16deg; transform:rotate(-16deg); animation:sway 12s ease-in-out infinite reverse; }
 
 /* Ramo vertical */
 .bouquet--hero{ width:150px; bottom:0; left:-58px;  --r:6deg;   transform:rotate(6deg);   animation:sway 13s ease-in-out infinite; }
@@ -529,18 +527,50 @@ img,svg{ display:block; max-width:100%; }
 }
 .soon p{ margin:0; font-size:.95rem; color:rgba(245,236,224,.55); line-height:1.5; }
 
-/* ====================== REGALOS ====================== */
-.gifts{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:8px; }
-.gift{
-  padding:20px 12px; border-radius:4px; border:1px solid rgba(212,175,55,.26);
-  background:linear-gradient(180deg, rgba(179,0,27,.14), rgba(255,255,255,.015));
+/* ====================== ITINERARIO ====================== */
+.itin{
+  list-style:none; margin:30px auto 0; padding:0;
+  width:min(430px,88vw); text-align:left; position:relative;
 }
-.gift__ico{ width:40px; height:40px; margin:0 auto 8px; }
-.gift__t{
-  margin:0 0 3px; font-family:var(--f-title); font-size:.62rem;
-  letter-spacing:.18em; text-transform:uppercase; color:var(--cream);
+.itin::before{
+  content:''; position:absolute; left:17px; top:18px; bottom:18px; width:1px;
+  background:linear-gradient(180deg, transparent, rgba(212,175,55,.55) 5%, rgba(212,175,55,.55) 95%, transparent);
 }
-.gift__d{ margin:0; font-size:.86rem; font-style:italic; color:rgba(245,236,224,.45); }
+.itin__item{ position:relative; padding:0 0 30px 56px; }
+.itin__item:last-child{ padding-bottom:0; }
+/* Cada momento lleva un palo de la baraja como marcador */
+.itin__item::before{
+  content:attr(data-palo);
+  position:absolute; left:0; top:0; width:35px; height:35px; border-radius:50%;
+  display:grid; place-items:center;
+  background:#12060a; border:1px solid rgba(212,175,55,.6);
+  color:var(--gold-lt); font-size:17px; line-height:1;
+  box-shadow:0 0 0 5px rgba(8,2,4,.85);
+}
+.itin__item--rojo::before{ color:#e8324a; }
+.itin__hora{
+  margin:0; line-height:35px; font-family:var(--f-title); font-weight:600;
+  font-size:.8rem; letter-spacing:.18em; color:var(--gold-lt);
+}
+.itin__tit{
+  margin:0 0 4px; font-family:var(--f-script); font-weight:400;
+  font-size:2.3rem; line-height:1; color:var(--cream);
+}
+.itin__det{ margin:0; font-size:1.02rem; line-height:1.55; color:var(--cream-dim); }
+.itin__lista{ margin:6px 0 0; padding:0; list-style:none; }
+.itin__lista li{
+  position:relative; padding-left:16px;
+  font-size:1rem; line-height:1.6; color:var(--cream-dim);
+}
+.itin__lista li::before{
+  content:''; position:absolute; left:2px; top:.72em;
+  width:5px; height:5px; border-radius:50%; background:var(--gold);
+}
+.itin__extra{
+  margin:8px 0 0; font-size:.94rem; font-style:italic; line-height:1.5;
+  color:rgba(242,220,154,.78);
+}
+.acard--itin2{ width:72px; bottom:40px; left:-18px; --r:-14deg; transform:rotate(-14deg); animation:sway 10.5s ease-in-out infinite; }
 
 /* ====================== ÁLBUM ====================== */
 .album__status{
@@ -669,22 +699,29 @@ img,svg{ display:block; max-width:100%; }
   box-shadow:0 0 0 3px rgba(212,175,55,.14);
 }
 
-/* Sugerencias de apellido */
-.rsvp__busca{ position:relative; }
-.rsvp__sug{
-  position:absolute; left:0; right:0; top:calc(100% + 4px); z-index:20;
-  margin:0; padding:4px; list-style:none;
-  max-height:246px; overflow-y:auto;
-  background:#160710; border:1px solid rgba(212,175,55,.45); border-radius:3px;
-  box-shadow:0 14px 34px rgba(0,0,0,.75);
+/* Botón del PDF y enlace para confirmar otra invitación */
+.btn--pdf{
+  width:100%; margin-bottom:8px; font-weight:600;
+  background:linear-gradient(180deg,#e9c766,#c9a227 55%,#9c7718);
+  color:#1a0409; border-color:#f2dc9a; border-style:solid;
 }
-.rsvp__op{
-  display:flex; align-items:center; justify-content:space-between; gap:10px;
-  padding:11px 12px; border-radius:2px; cursor:pointer;
-  transition:background .18s;
+.btn--pdf:hover,.btn--pdf:focus-visible,.btn--pdf:disabled:hover{
+  background:linear-gradient(180deg,#f6dc8a,#d4af37 55%,#a67c1e); color:#12060a;
 }
-.rsvp__op:hover,.rsvp__op:focus{ background:rgba(179,0,27,.34); }
-.rsvp__op{ font-size:1rem; color:var(--cream); }
+.btn--pdf:disabled{ opacity:.6; cursor:wait; border-style:solid; }
+.rsvp__pdfEstado{
+  margin:0 0 20px; min-height:1.3em;
+  font-size:.92rem; font-style:italic; color:var(--gold-lt);
+}
+.rsvp__pdfEstado.is-error{ color:#ff8a9c; }
+.rsvp__hecho .btn--wa{ width:100%; }
+.rsvp__otra{
+  display:block; margin:18px auto 0; padding:6px 10px;
+  background:none; border:0; cursor:pointer;
+  font-family:var(--f-body); font-size:.94rem; font-style:italic;
+  color:rgba(245,236,224,.55); text-decoration:underline; text-underline-offset:3px;
+}
+.rsvp__otra:hover{ color:var(--gold-lt); }
 
 /* Campo del código */
 .rsvp__codigo{
@@ -814,9 +851,7 @@ img,svg{ display:block; max-width:100%; }
 .acard--count{ width:70px; bottom:30px; left:-16px;  --r:-14deg; transform:rotate(-14deg); animation:sway 11s ease-in-out infinite; }
 .acard--itin { width:78px; top:34px;    right:-18px; --r:16deg;  transform:rotate(16deg);  animation:sway 9.5s ease-in-out infinite reverse; }
 .acard--ubic { width:66px; top:28px;    left:-14px;  --r:-12deg; transform:rotate(-12deg); animation:sway 12s ease-in-out infinite; }
-.acard--vest { width:74px; bottom:30px; right:-16px; --r:14deg;  transform:rotate(14deg);  animation:sway 10s ease-in-out infinite reverse; }
-.acard--gift { width:70px; top:30px;    right:-14px; --r:-15deg; transform:rotate(-15deg); animation:sway 11.5s ease-in-out infinite; }
-.acard--album{ width:76px; bottom:34px; left:-18px;  --r:17deg;  transform:rotate(17deg);  animation:sway 9s ease-in-out infinite reverse; }
+.acard--vest { width:74px; bottom:30px; right:-16px; --r:14deg;  transform:rotate(14deg);  animation:sway 10s ease-in-out infinite reverse; }.acard--album{ width:76px; bottom:34px; left:-18px;  --r:17deg;  transform:rotate(17deg);  animation:sway 9s ease-in-out infinite reverse; }
 
 /* ====================== REVEAL ====================== */
 .reveal{ opacity:0; transform:translateY(26px); transition:opacity .95s ease, transform .95s cubic-bezier(.22,.9,.3,1); }
@@ -832,9 +867,7 @@ img,svg{ display:block; max-width:100%; }
   .bouquet--hero{ width:112px; left:-42px; }
   .bouquet--rsvp{ width:100px; left:-72px; }
   .rose--count{ width:92px; right:-36px; }
-  .rose--rsvp{ width:100px; right:-40px; }
-  .rose--gift{ width:84px; left:-32px; }
-  .guard{ width:136px; }
+  .rose--rsvp{ width:100px; right:-40px; }  .guard{ width:136px; }
   .cal{ padding:16px 10px 12px; }
   .cal__grid span{ font-size:.76rem; }
 }
