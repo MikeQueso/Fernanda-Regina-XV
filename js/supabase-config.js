@@ -20,3 +20,9 @@ window.SUPABASE = {
 
 /* Número de WhatsApp que recibe los avisos (con clave de país). */
 window.WHATSAPP = '525611419206';
+
+/* Álbum de fotos:
+     'auto'     cerrado hasta el 21 de noviembre de 2026; ese día se abre solo
+     'abierto'  abierto ya (útil para probar)
+     'cerrado'  cerrado aunque ya sea el día */
+window.ALBUM = 'auto';

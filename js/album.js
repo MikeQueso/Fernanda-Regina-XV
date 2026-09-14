@@ -30,7 +30,15 @@
 
   if (!box) return;
 
-  if (!CFG.url || !CFG.anonKey) {
+  // El álbum se abre solo el día de la fiesta, a medianoche hora del centro
+  // de México, para no depender de activarlo a mano en pleno evento.
+  // window.ALBUM (js/supabase-config.js) permite forzarlo: 'abierto' | 'cerrado'.
+  var APERTURA = new Date('2026-11-21T00:00:00-06:00').getTime();
+  var modo = window.ALBUM || 'auto';
+  var abierto = modo === 'abierto' || (modo === 'auto' && Date.now() >= APERTURA);
+
+  // Cerrado: no se lista ni se muestra ninguna foto, solo el aviso.
+  if (!CFG.url || !CFG.anonKey || !abierto) {
     box.hidden = true;
     if (soon) soon.hidden = false;
     return;
