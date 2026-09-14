@@ -25,7 +25,7 @@
     misaLugar:  'Catedral Jesús Señor de la Misericordia',
     recHora:    '8:00 PM',
     recLugar:   'Jardín de Eventos Xoxicalli',
-    vestimenta: 'Formal · cualquier color menos rojo'
+    vestimenta: 'Formal · excepto color rojo'
   };
 
   var CARTAS = ['reina-corazones', 'conejo-diamantes', 'alicia-picas', 'oruga-treboles',
