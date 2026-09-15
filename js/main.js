@@ -121,6 +121,33 @@
     }).observe(aceptar);
   }
 
+  // Mesa de regalos: copiar el número de evento de Liverpool. Si el navegador
+  // no deja usar el portapapeles, se selecciona el número para copiarlo a mano.
+  var btnCopiar = $('#copiarEvento');
+  if (btnCopiar) {
+    btnCopiar.addEventListener('click', function () {
+      var num = $('#numEvento');
+      var aviso = $('#copiadoAviso');
+      var digitos = num.textContent.replace(/\D/g, '');
+
+      function copiado() { aviso.textContent = '¡Número copiado!'; }
+      function aMano() {
+        var rango = document.createRange();
+        rango.selectNodeContents(num);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(rango);
+        aviso.textContent = 'Mantén presionado el número para copiarlo.';
+      }
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(digitos).then(copiado, aMano);
+      } else {
+        aMano();
+      }
+    });
+  }
+
   /* ==========================================================
      4. PORTADA DE ENTRADA
      ========================================================== */

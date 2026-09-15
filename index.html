@@ -56,6 +56,13 @@
         <path d="M62 22 h16"/>
       </g>
     </symbol>
+    <symbol id="symGift" viewBox="0 0 100 100">
+      <g fill="none" stroke="url(#gGold)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="18" y="40" width="64" height="44" rx="4"/>
+        <path d="M14 30 h72 v12 H14 Z M50 30 v54"/>
+        <path d="M50 30 c-14 0 -22-4 -22-11 s12-8 22 11 Z M50 30 c14 0 22-4 22-11 s-12-8 -22 11 Z"/>
+      </g>
+    </symbol>
     <symbol id="symCamera" viewBox="0 0 100 100">
       <g fill="none" stroke="url(#gGold)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
         <path d="M14 32 h16 l6-9 h28 l6 9 h16 a4 4 0 0 1 4 4 v38 a4 4 0 0 1 -4 4 H14 a4 4 0 0 1 -4-4 V36 a4 4 0 0 1 4-4 Z"/>
@@ -243,7 +250,27 @@
     </div>
   </section>
 
-  <!-- ========== 6. ÁLBUM (Supabase) ========== -->
+  <!-- ========== 6. MESA DE REGALOS ========== -->
+  <section class="sec" id="regalos">
+    <img class="rose rose--gift" src="assets/img/rosa.png" alt="" aria-hidden="true" loading="lazy">
+    <img class="acard acard--gift" src="assets/img/cartas/alicia-diamantes.webp" alt="" aria-hidden="true" loading="lazy">
+    <div class="wrap reveal">
+      <svg class="ico"><use href="#symGift"/></svg>
+      <h2 class="h-script">Mesa de regalos</h2>
+      <p class="regalo__intro">Mi mejor regalo es tu presencia, pero si quieres obsequiarme algo, puedes hacerlo de la siguiente forma:</p>
+
+      <div class="regalo">
+        <p class="regalo__tienda">Mesa de regalos <b>Liverpool</b></p>
+        <p class="regalo__lbl">Número de evento</p>
+        <p class="regalo__num" id="numEvento">60043919</p>
+        <a class="btn-liverpool" href="https://mesaderegalos.liverpool.com.mx/milistaderegalos/60043919" target="_blank" rel="noopener">Ver mesa de regalos</a>
+        <button class="btn-copiar" type="button" id="copiarEvento">Copiar número</button>
+        <p class="regalo__aviso" id="copiadoAviso" role="status" aria-live="polite"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 7. ÁLBUM (Supabase) ========== -->
   <section class="sec sec--tint" id="album">
     <img class="acard acard--album" src="assets/img/cartas/alicia-treboles.webp" alt="" aria-hidden="true" loading="lazy">
     <div class="wrap reveal">
@@ -268,7 +295,7 @@
     </div>
   </section>
 
-  <!-- ========== 7. CONFIRMACIÓN ========== -->
+  <!-- ========== 8. CONFIRMACIÓN ========== -->
   <section class="sec sec--rsvp" id="rsvp">
     <img class="bouquet bouquet--rsvp" src="assets/img/rosas-ramo.png" alt="" aria-hidden="true" loading="lazy">
     <img class="rose rose--rsvp" src="assets/img/rosa.png" alt="" aria-hidden="true" loading="lazy">
@@ -287,7 +314,7 @@
     </div>
   </section>
 
-  <!-- ========== 8. CIERRE ========== -->
+  <!-- ========== 9. CIERRE ========== -->
   <footer class="closing">
     <img class="cat cat--closing" src="assets/img/gato.png" alt="" aria-hidden="true" loading="lazy">
     <p class="closing__txt">Tu presencia hará de esa noche<br>algo especial, única e inolvidable.</p>

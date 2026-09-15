@@ -403,6 +403,76 @@ img,svg{ display:block; max-width:100%; }
 }
 .vest__reina img{ width:100%; height:auto; }
 
+/* ====================== MESA DE REGALOS ====================== */
+/* Letra grande y número bien visible: también la leen personas mayores. */
+.rose--gift { width:104px; bottom:26px; left:-42px; --r:-18deg; transform:rotate(-18deg); animation:sway 11s ease-in-out infinite reverse; }
+.acard--gift{ width:70px; top:30px; right:-14px; --r:-15deg; transform:rotate(-15deg); animation:sway 11.5s ease-in-out infinite; }
+.regalo__intro{
+  margin:0 auto 26px; max-width:28ch;
+  font-size:clamp(1.2rem,4.8vw,1.4rem); line-height:1.55; color:var(--cream);
+}
+.regalo{
+  width:min(420px,100%); margin:0 auto; padding:24px 20px 22px;
+  border:2px solid rgba(212,175,55,.55); border-radius:16px;
+  background:linear-gradient(180deg, rgba(179,0,27,.22), rgba(255,255,255,.02));
+  box-shadow:0 14px 34px rgba(0,0,0,.45);
+}
+.regalo__tienda{
+  margin:0 0 18px; font-family:var(--f-title); font-size:.92rem;
+  letter-spacing:.18em; text-transform:uppercase; color:var(--cream-dim); line-height:1.5;
+}
+.regalo__tienda b{
+  display:block; margin-top:4px;
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  font-weight:800; font-size:clamp(2rem,8.5vw,2.5rem); letter-spacing:.01em;
+  text-transform:none; color:#fff;
+}
+.regalo__lbl{
+  margin:0 0 4px; font-family:var(--f-title); font-size:.78rem;
+  letter-spacing:.24em; text-transform:uppercase; color:var(--gold);
+}
+.regalo__num{
+  margin:0 0 18px;
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  font-weight:800; font-size:clamp(2.3rem,10.5vw,3rem); letter-spacing:.1em; line-height:1.15;
+  color:var(--gold-lt); font-variant-numeric:tabular-nums;
+  -webkit-user-select:all; user-select:all;   /* un toque selecciona el número completo */
+}
+.btn-copiar{
+  display:block; width:100%; min-height:62px; padding:14px 18px;
+  border-radius:14px; cursor:pointer;
+  background:transparent; border:3px solid var(--gold); color:var(--gold-lt);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  font-weight:700; font-size:clamp(1.15rem,4.8vw,1.3rem);
+  -webkit-tap-highlight-color:transparent;
+}
+.btn-copiar:hover,.btn-copiar:focus-visible{
+  background:rgba(212,175,55,.15); outline:3px solid #fff; outline-offset:4px;
+}
+/* Botón principal: abre la mesa de regalos de este evento en Liverpool */
+.btn-liverpool{
+  display:flex; align-items:center; justify-content:center;
+  width:100%; min-height:66px; margin:0 0 12px; padding:14px 18px;
+  border-radius:14px; text-decoration:none; text-align:center;
+  background:linear-gradient(180deg,#f6dc86,#d9b544 55%,#b8922a);
+  border:3px solid #fff1bd; color:#1a0409;
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  font-weight:800; font-size:clamp(1.2rem,5vw,1.4rem);
+  box-shadow:0 10px 26px rgba(0,0,0,.5);
+  -webkit-tap-highlight-color:transparent;
+}
+.btn-liverpool:hover,.btn-liverpool:focus-visible{
+  background:linear-gradient(180deg,#fbe7a8,#e3c25a 55%,#c29c30);
+  outline:3px solid #fff; outline-offset:4px;
+}
+.regalo__aviso{
+  margin:12px 0 0; min-height:1.4em;
+  font-size:clamp(1.05rem,4.4vw,1.2rem); color:var(--gold-lt);
+}
+@media (max-width:420px){
+  .rose--gift{ width:84px; left:-32px; }
+}
+
 /* ====================== CONTADOR ====================== */
 .sec--count{ padding-top:64px; }
 

@@ -45,6 +45,14 @@ también abren la invitación personas mayores.
 Los pases en PDF (2 a 6 boletos) no se generan en la página: se hacen aparte con
 `privado/generar-boletos.html`, fuera del repositorio, y se mandan por WhatsApp.
 
+## Mesa de regalos
+
+Liverpool, número de evento **60043919**. El número se ve en grande, con un botón que
+abre la lista del evento en Liverpool
+(`mesaderegalos.liverpool.com.mx/milistaderegalos/60043919`, comprobado que es la de
+Fernanda Regina) y otro para copiar el número; si el teléfono no deja copiar solo, lo
+selecciona para copiarlo a mano.
+
 ## Álbum de fotos
 
 Cerrado hasta el día de la fiesta con el aviso *"Este apartado se abrirá en el gran
