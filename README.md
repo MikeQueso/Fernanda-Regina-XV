@@ -16,7 +16,9 @@ index.html                  La invitación
 css/styles.css              Estilos
 js/main.js                  Contador, calendario, música, animaciones
 js/album.js                 Álbum de fotos (Supabase Storage)
+js/boletos-pdf.js           Pase en PDF que se descarga al aceptar la invitación
 js/supabase-config.js       URL y clave publicable de Supabase, y modo del álbum
+assets/vendor/              jsPDF 2.5.1 (licencia MIT), se carga solo al generar el PDF
 assets/audio, assets/img    Música e imágenes
 ```
 
@@ -38,9 +40,15 @@ navegador bloquea el audio, las fuentes y el álbum.
 Un solo botón, **Aceptar invitación**, que abre WhatsApp con el mensaje
 *"Aceptamos, gracias por invitarnos"* dirigido al 56 1141 9206.
 
-Es un enlace normal, sin formularios ni JavaScript, así que funciona en cualquier
-teléfono. El botón y su texto son grandes y de alto contraste a propósito:
-también abren la invitación personas mayores.
+Es un enlace normal, sin formularios, así que funciona en cualquier teléfono. El
+botón y su texto son grandes y de alto contraste a propósito: también abren la
+invitación personas mayores.
+
+En el mismo toque se descarga un **pase en PDF** (`js/boletos-pdf.js`) con el
+agradecimiento y los datos del evento. Es general, sin nombre ni número de boletos,
+porque la invitación no pregunta quién confirma. WhatsApp no espera al PDF: si el
+enlace se abriera con retraso, en iPhone ya no saltaría directo a la app. Si la
+descarga falla, aparece un botón para volver a intentarlo.
 
 ## Álbum de fotos
 
