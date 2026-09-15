@@ -111,6 +111,16 @@
     }
   });
 
+  // Mientras el botón de "Aceptar invitación" está en pantalla se esconde el de
+  // música: flota encima de su esquina y un toque en falso pausaría la canción
+  // en vez de confirmar (lo usan también personas mayores).
+  var aceptar = document.querySelector('.btn-aceptar');
+  if (aceptar && 'IntersectionObserver' in window) {
+    new IntersectionObserver(function (entradas) {
+      musicBtn.classList.toggle('is-oculto', entradas[0].isIntersecting);
+    }).observe(aceptar);
+  }
+
   /* ==========================================================
      4. PORTADA DE ENTRADA
      ========================================================== */
